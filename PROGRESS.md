@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 4 selesai (F4.6 ✅) → Fase 5 Dashboard
+**Current phase:** Fase 5 — Dashboard (F5.1 ✅)
 
 ---
 
@@ -28,12 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 4 ✅ — siap Fase 5 Dashboard
-- **Sprint aktif:** Fase 5.1 Dashboard foundation
-- **Task berikutnya:** F5.1.1 Flet dashboard skeleton, F4.1.7 perf test (opsional)
+- **Phase:** Fase 5 — **F5.1 Dashboard foundation** ✅
+- **Sprint aktif:** F5.2 Kanban view
+- **Task berikutnya:** F5.2.1 four-column Kanban layout
 - **Blocker aktif:** —
 - **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
-- **Tests:** `pytest -m "not integration"` → **183 passed**
+- **Tests:** `pytest -m "not integration"` → **189 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -319,15 +319,15 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 
 ---
 
-### Fase 5 — Dashboard Full Feature [Minggu 8-10] [ ]
+### Fase 5 — Dashboard Full Feature [Minggu 8-10] [~]
 **Goal:** UI dashboard lengkap dengan 4 tab + chat.
 
-#### Milestone 5.1 — Dashboard Foundation [ ]
-- [ ] **F5.1.1** Flet app skeleton + routing antar tab
-- [ ] **F5.1.2** Theme + color tokens
-- [ ] **F5.1.3** Dark mode toggle
-- [ ] **F5.1.4** State store (observable, subscribe ke event bus)
-- [ ] **F5.1.5** Live activity feed component
+#### Milestone 5.1 — Dashboard Foundation [x]
+- [x] **F5.1.1** Flet app skeleton + routing antar tab (`dashboard/app.py`)
+- [x] **F5.1.2** Theme + color tokens (`dashboard/theme.py`)
+- [x] **F5.1.3** Dark mode toggle
+- [x] **F5.1.4** State store (`dashboard/state/store.py`, event bus + poll)
+- [x] **F5.1.5** Live activity feed (`dashboard/components/activity_feed.py`)
 
 #### Milestone 5.2 — Kanban View (Tab 1) [ ]
 - [ ] **F5.2.1** 4-column layout
@@ -402,6 +402,15 @@ Total milestones per fase:
 ## 5. Session Log
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
+
+### 2026-05-29 — F5.1 Dashboard foundation
+**Selesai:**
+- Flet shell: 4 tabs, metrics row, activity feed, dark mode
+- `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
+
+**Next:** F5.2 Kanban columns + task cards
+
+---
 
 ### 2026-05-29 — F4.6 E2E expense tracker validation
 **Selesai:**

@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 import asyncio
+from pathlib import Path
 
 import typer
 from rich.console import Console
@@ -276,6 +277,34 @@ def _check_ollama(host: str) -> bool:
             return bool(resp.status == 200)
     except (urllib.error.URLError, TimeoutError, OSError):
         return False
+
+
+@app.command("dashboard")
+def dashboard_cmd(
+    workspace: Path | None = typer.Option(  # noqa: B008
+        None,
+        "--workspace",
+        "-w",
+        help="Workspace directory (default: AGENT_BUILDER_WORKSPACE)",
+    ),
+) -> None:
+    """Launch the Flet monitoring dashboard (requires pip install -e '.[dashboard]')."""
+    try:
+        from agent_builder.dashboard.app import run_dashboard
+    except ImportError:
+        console.print(
+            "[red]Dashboard dependencies missing.[/red] "
+            "Install with: [bold]pip install -e '.[dashboard]'[/bold]"
+        )
+        raise typer.Exit(code=1) from None
+
+    settings = get_settings()
+    ws = _workspace_from_settings(settings) if workspace is None else Workspace(workspace)
+    ws.ensure_layout()
+    configure_logging(ws, level=settings.log_level)
+    root = workspace or settings.workspace_dir
+    console.print(f"[green]Starting dashboard[/green] for workspace: {root}")
+    run_dashboard(root)
 
 
 def main() -> None:
