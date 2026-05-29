@@ -6,6 +6,7 @@ from dataclasses import dataclass, field
 from datetime import UTC, datetime
 
 from agent_builder.core.event_bus import Event, EventBus, EventType
+from agent_builder.llm.budget import BudgetLevel, budget_level_for_usage
 from agent_builder.llm.types import LLMResponse
 
 # USD per 1M tokens (ARCHITECTURE.md §17.4)
@@ -38,6 +39,10 @@ class CostTracker:
         self.records: list[CostRecord] = []
         self.budget_cap = budget_cap
         self._budget_exceeded = False
+        self._budget_level = BudgetLevel.OK
+        self._pause_all = False
+        self._pause_planner = False
+        self._event_bus = event_bus
         event_bus.subscribe(EventType.LLM_CALL, self.on_llm_call)
 
     @property
@@ -47,6 +52,28 @@ class CostTracker:
     @property
     def budget_exceeded(self) -> bool:
         return self._budget_exceeded
+
+    @property
+    def budget_level(self) -> BudgetLevel:
+        return self._budget_level
+
+    @property
+    def pause_all_agents(self) -> bool:
+        return self._pause_all
+
+    @property
+    def pause_planner(self) -> bool:
+        return self._pause_planner
+
+    def should_allow_call(self, agent: str) -> bool:
+        """Enforce budget thresholds (80% planner pause, 100% all pause)."""
+        if self.budget_cap is None:
+            return True
+        if self._pause_all:
+            return False
+        if self._pause_planner and agent.lower() == "planner":
+            return False
+        return True
 
     def on_llm_call(self, event: Event) -> None:
         model = str(event.payload.get("model", "ollama"))
@@ -87,5 +114,26 @@ class CostTracker:
     def _check_budget(self) -> None:
         if self.budget_cap is None:
             return
-        if self.total_cost_usd >= self.budget_cap:
-            self._budget_exceeded = True
+        level = budget_level_for_usage(self.total_cost_usd, self.budget_cap)
+        self._budget_level = level
+        self._pause_planner = level in (BudgetLevel.WARN_80, BudgetLevel.EXCEEDED)
+        self._pause_all = level == BudgetLevel.EXCEEDED
+        self._budget_exceeded = self._pause_all
+        self._publish_cost_update()
+
+    def _publish_cost_update(self) -> None:
+        if self._event_bus is None:
+            return
+        self._event_bus.publish_sync(
+            Event(
+                type=EventType.COST_UPDATED,
+                session_id="",
+                payload={
+                    "total_cost_usd": self.total_cost_usd,
+                    "budget_cap": self.budget_cap,
+                    "budget_level": self._budget_level.value,
+                    "pause_all": self._pause_all,
+                    "pause_planner": self._pause_planner,
+                },
+            ),
+        )

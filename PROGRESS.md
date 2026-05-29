@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 5 — Dashboard (F5.3 ✅)
+**Current phase:** Fase 5 — Dashboard (F5.4 ✅)
 
 ---
 
@@ -28,12 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 5 — **F5.3 Dependency graph** ✅
-- **Sprint aktif:** F5.4 Cost breakdown
-- **Task berikutnya:** F5.4.1 top metrics row
+- **Phase:** Fase 5 — **F5.4 Cost breakdown** ✅
+- **Sprint aktif:** F5.5 Replay
+- **Task berikutnya:** F5.5.1 event reader (events.jsonl)
 - **Blocker aktif:** —
-- **Last commit:** (F5.3 — sesi ini)
-- **Tests:** `pytest -m "not integration"` → **203 passed**
+- **Last commit:** (F5.4 — sesi ini)
+- **Tests:** `pytest -m "not integration"` → **208 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -345,13 +345,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F5.3.5** Filter: by status, by agent
 
 #### Milestone 5.4 — Cost Breakdown (Tab 3) [ ]
-- [ ] **F5.4.1** Top metrics row
-- [ ] **F5.4.2** Bar chart per agent
-- [ ] **F5.4.3** Pie chart per model
-- [ ] **F5.4.4** Trend line chart over time
-- [ ] **F5.4.5** Token usage table
-- [ ] **F5.4.6** Budget alerts (50/80/100%)
-- [ ] **F5.4.7** Auto-pause on budget exceeded
+- [x] **F5.4.1** Top metrics row
+- [x] **F5.4.2** Bar chart per agent
+- [x] **F5.4.3** Pie chart per model
+- [x] **F5.4.4** Trend line chart over time
+- [x] **F5.4.5** Token usage table
+- [x] **F5.4.6** Budget alerts (50/80/100%)
+- [x] **F5.4.7** Auto-pause on budget exceeded
 
 #### Milestone 5.5 — Replay (Tab 4) [ ]
 - [ ] **F5.5.1** Event reader (events.jsonl)
@@ -408,7 +408,18 @@ Total milestones per fase:
 - Flet shell: 4 tabs, metrics row, activity feed, dark mode
 - `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
 
-**Next:** F5.4 Cost breakdown
+**Next:** F5.5 Replay
+
+---
+
+### 2026-05-29 — F5.4 Cost breakdown
+**Selesai:**
+- `dashboard/cost/aggregates.py` — agregasi dari events + session
+- `cost_charts.py` — metrics, bar agent, model list, trend canvas, token table
+- `llm/budget.py` — threshold 50/80/100%; CostTracker pause planner/all
+- Tab Cost: budget banner, `AGENT_BUILDER_BUDGET_USD`
+
+**Next:** F5.5 Replay (Tab 4)
 
 ---
 

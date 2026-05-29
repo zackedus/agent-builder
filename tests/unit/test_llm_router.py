@@ -134,5 +134,26 @@ def test_cost_tracker_from_llm_call_event() -> None:
     assert tracker.budget_exceeded is True
 
 
+def test_cost_tracker_pauses_planner_at_80_percent() -> None:
+    from agent_builder.llm.budget import BudgetLevel
+    from agent_builder.llm.cost_tracker import CostRecord
+
+    bus = EventBus()
+    tracker = CostTracker(bus, budget_cap=10.0)
+    tracker.records.append(
+        CostRecord(
+            agent="coder",
+            model=SONNET_ALIAS,
+            cost_usd=8.0,
+            input_tokens=0,
+            output_tokens=0,
+        )
+    )
+    tracker._check_budget()
+    assert tracker.budget_level == BudgetLevel.WARN_80
+    assert tracker.should_allow_call("coder") is True
+    assert tracker.should_allow_call("planner") is False
+
+
 def test_estimate_cost_ollama_free() -> None:
     assert estimate_cost(OLLAMA_ALIAS, 5000, 5000) == 0.0

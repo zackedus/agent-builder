@@ -131,6 +131,11 @@ class LLMRouter:
         max_tokens: int | None = None,
     ) -> LLMResponse:
         """Complete a prompt with automatic failover to fallback model."""
+        if self.cost_tracker is not None and not self.cost_tracker.should_allow_call(request.agent):
+            raise LLMProviderError(
+                f"Budget cap reached (${self.cost_tracker.total_cost_usd:.4f}); "
+                f"LLM calls paused for {request.agent}"
+            )
         decision = self.decide(request)
         errors: list[str] = []
 
