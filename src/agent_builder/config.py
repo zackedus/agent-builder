@@ -47,6 +47,10 @@ class Settings(BaseSettings):
         default="auto",
         validation_alias="AGENT_BUILDER_SANDBOX_LAYER",
     )
+    coder_use_index: bool = Field(
+        default=True,
+        validation_alias="AGENT_BUILDER_CODER_USE_INDEX",
+    )
 
     def anthropic_configured(self) -> bool:
         return bool(self.anthropic_api_key and self.anthropic_api_key.strip())

@@ -1,0 +1,10 @@
+Flet UI patterns (Python 3.11+):
+
+- App entry: `ft.app(target=main)` where `main(page: ft.Page)` sets `page.title`, `page.theme_mode`.
+- Layout: prefer `ft.Column` / `ft.Row` with `spacing`, `scroll=ft.ScrollMode.AUTO` for forms and lists.
+- Forms: `ft.TextField(label=...)`, `ft.Dropdown(options=[ft.dropdown.Option(...)])`, `ft.ElevatedButton(text=..., on_click=handler)`.
+- Lists: `ft.ListView(controls=[ft.ListTile(title=ft.Text(...)) for item in items])`.
+- Navigation: `page.views` + `page.go(route)` or swap `page.controls` on button clicks.
+- Charts: `import flet as ft` then `ft.LineChart` / `ft.BarChart` with `data_series` (see Flet chart docs).
+- SQLite: use `sqlite3` in a small module; keep DB path under project dir; no raw SQL in UI handlers.
+- State: update controls then `page.update()` after data changes.

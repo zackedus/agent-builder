@@ -17,6 +17,14 @@ Output rules:
 - Respond with one or more markdown code fences only.
 - Each fence MUST name the file in the info line, e.g. ```python:calc.py
 - Alternatively put `# file: path/to/file.py` as the first line inside the fence.
-- Write complete, runnable file contents (no placeholders like "..." ).
+- For NEW files: write complete, runnable file contents (no placeholders like "...").
+- For EXISTING files: prefer SEARCH/REPLACE patches instead of rewriting the whole file.
+- Patch format (exact markers, one or more blocks per file):
+  <<<<<<< SEARCH
+  exact lines to find (must match file content uniquely)
+  =======
+  replacement lines
+  >>>>>>> REPLACE
+- You may update multiple related files in one response when the task requires it.
 - Prefer minimal changes; match Python 3.11+ conventions.
 - For CLI scripts, include `if __name__ == "__main__":` when appropriate.

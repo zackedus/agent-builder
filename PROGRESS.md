@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 4 — Docker sandbox (F4.4 ✅)
+**Current phase:** Fase 4 — Enhanced Coder (F4.5 ✅)
 
 ---
 
@@ -28,13 +28,13 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 4 — **F4.4 Docker sandbox** ✅
+- **Phase:** Fase 4 — **F4.5 Enhanced Coder** ✅
 - **Fase 3:** ✅ selesai (E2E todo + self-correction)
-- **Sprint aktif:** F4.5 Enhanced Coder, atau F4.6 E2E validation
-- **Task berikutnya:** F4.5.1 Coder + Indexer, F4.1.7 perf test, F4.6 expense tracker E2E
+- **Sprint aktif:** F4.6 E2E validation, atau F4.1.7 perf test
+- **Task berikutnya:** F4.6 expense tracker E2E, F4.1.7 perf test 1000 files
 - **Blocker aktif:** —
 - **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
-- **Tests:** `pytest -m "not integration"` → **171 passed**
+- **Tests:** `pytest -m "not integration"` → **180 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -300,11 +300,11 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F4.4.6** Auto-cleanup (`docker run --rm`)
 - [x] **F4.4.7** Fallback ke Layer 1 (`sandbox/factory.py`, `AGENT_BUILDER_SANDBOX_LAYER`)
 
-#### Milestone 4.5 — Enhanced Coder [ ]
-- [ ] **F4.5.1** Upgrade Coder pakai Indexer untuk konteks
-- [ ] **F4.5.2** Diff-based editing (bukan full rewrite)
-- [ ] **F4.5.3** Multi-file refactor support
-- [ ] **F4.5.4** Flet-specific code generation patterns
+#### Milestone 4.5 — Enhanced Coder [x]
+- [x] **F4.5.1** Coder + Indexer (`coder_context.py`, `search_relevant_chunks`)
+- [x] **F4.5.2** SEARCH/REPLACE patches (`code_patches.py`, `code_parser.py`)
+- [x] **F4.5.3** Multi-file output (prompt + multiple fences)
+- [x] **F4.5.4** Flet patterns (`llm/prompts/flet_reference.txt` for `ui` tasks)
 
 #### Milestone 4.6 — E2E Validation [ ]
 - [ ] **F4.6.1** Test prompt: "Aplikasi pencatat pengeluaran + grafik bulanan"
@@ -403,6 +403,16 @@ Total milestones per fase:
 ## 5. Session Log
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
+
+### 2026-05-29 — F4.5 Enhanced Coder
+**Selesai:**
+- Index context via semantic search; existing file context for patches
+- SEARCH/REPLACE patch application; `AGENT_BUILDER_CODER_USE_INDEX`
+- Flet reference prompt for UI tasks
+
+**Next:** F4.6 E2E expense tracker validation
+
+---
 
 ### 2026-05-29 — F4.4 Docker sandbox Layer 2
 **Selesai:**

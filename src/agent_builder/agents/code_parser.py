@@ -5,6 +5,7 @@ from __future__ import annotations
 import re
 from dataclasses import dataclass
 
+from agent_builder.agents.code_patches import has_search_replace_blocks, parse_search_replace_blocks
 from agent_builder.llm.exceptions import LLMError
 
 _FENCE_RE = re.compile(r"```([^\n`]*)\r?\n([\s\S]*?)```", re.MULTILINE)
@@ -23,6 +24,7 @@ class CodeFile:
     path: str
     content: str
     language: str | None = None
+    patches: tuple[tuple[str, str], ...] = ()
 
 
 def _parse_fence_info(info: str) -> tuple[str | None, str | None]:
@@ -68,8 +70,17 @@ def extract_code_files(
             continue
 
         normalized = path.replace("\\", "/").lstrip("/")
-        content = body.rstrip("\n") + "\n"
-        files[normalized] = CodeFile(path=normalized, content=content, language=language)
+        if has_search_replace_blocks(body):
+            patch_blocks = tuple(parse_search_replace_blocks(body))
+            files[normalized] = CodeFile(
+                path=normalized,
+                content="",
+                language=language,
+                patches=patch_blocks,
+            )
+        else:
+            content = body.rstrip("\n") + "\n"
+            files[normalized] = CodeFile(path=normalized, content=content, language=language)
 
     if files:
         return list(files.values())

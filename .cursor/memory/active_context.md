@@ -1,24 +1,23 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F4.4 Docker sandbox selesai
+**Last updated:** 2026-05-29 — F4.5 Enhanced Coder selesai
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 4 — **F4.5** Enhanced Coder (Indexer context), atau **F4.6** E2E validation
-- **Selesai:** Docker Layer 2 + fallback Layer 1 via `create_project_sandbox()`
-- **Prompt:** `lanjut` atau *Lanjut F4.5 Coder*
+- **Phase:** Fase 4 — **F4.6** E2E validation (expense tracker → .exe)
+- **Selesai:** Coder + Indexer context, SEARCH/REPLACE patches, Flet reference
+- **Prompt:** `lanjut` atau *Lanjut F4.6 E2E*
 
 ## File penting
 
 | Tujuan | Path |
 |--------|------|
-| Docker sandbox | `src/agent_builder/sandbox/docker_sandbox.py` |
-| Factory / fallback | `src/agent_builder/sandbox/factory.py` |
-| Env | `AGENT_BUILDER_SANDBOX_LAYER=auto` |
+| Coder context | `src/agent_builder/agents/coder_context.py` |
+| Patches | `src/agent_builder/agents/code_patches.py` |
+| Env | `AGENT_BUILDER_CODER_USE_INDEX=true` |
 
 ## Commands
 
 ```powershell
 pytest -m "not integration" -q
-docker build -t agent-builder-sandbox:3.11 -f src/agent_builder/sandbox/images/Dockerfile src/agent_builder/sandbox/images
 ```
