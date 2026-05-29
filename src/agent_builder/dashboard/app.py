@@ -8,6 +8,7 @@ from pathlib import Path
 from typing import Any
 
 from agent_builder.dashboard.components.activity_feed import build_activity_feed
+from agent_builder.dashboard.components.settings_panel import build_settings_dialog
 from agent_builder.dashboard.flet_ui import build_tabs_shell, configure_window, launch_app
 from agent_builder.dashboard.state.store import open_store
 from agent_builder.dashboard.theme import (
@@ -101,11 +102,33 @@ def run_dashboard(workspace_dir: Path | None = None, *, poll_interval_s: float =
         def toggle_theme(_: Any) -> None:
             store.toggle_dark_mode()
 
+        settings_dialog_holder: list[Any] = []
+
+        def close_settings() -> None:
+            if settings_dialog_holder and hasattr(page, "close"):
+                page.close(settings_dialog_holder[0])
+            settings_dialog_holder.clear()
+
+        def open_settings(_: Any) -> None:
+            dialog = build_settings_dialog(store, _tokens(), on_close=close_settings)
+            settings_dialog_holder.clear()
+            settings_dialog_holder.append(dialog)
+            if hasattr(page, "open"):
+                page.open(dialog)
+            else:
+                page.dialog = dialog
+                page.update()
+
         header = ft.Row(
             [
                 ft.Text("Agent Team Builder", size=20, weight=ft.FontWeight.BOLD),
                 session_label,
                 ft.Container(expand=True),
+                ft.IconButton(
+                    icon=ft.Icons.SETTINGS,
+                    tooltip="Pengaturan & jalankan build",
+                    on_click=open_settings,
+                ),
                 ft.IconButton(
                     icon=ft.Icons.DARK_MODE if not store.dark_mode else ft.Icons.LIGHT_MODE,
                     tooltip="Toggle dark mode",
