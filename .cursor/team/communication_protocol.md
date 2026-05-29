@@ -14,6 +14,13 @@ No agent may rely on hidden memory only.
 - Decision record: .cursor/team/decisions/
 - Feature registry: .cursor/memory/feature_registry.json
 - Module map: docs/module_map.md
+- **Dashboard guide (Fase 5+):** [.cursor/team/DASHBOARD_GUIDE.md](DASHBOARD_GUIDE.md) — team broadcast for all agents
+
+## Dashboard operations (2026-05-29)
+
+Users can run builds from **Tab Kontrol** in `agent-builder dashboard`, not only from CLI.
+
+Agents working on orchestrator, events, Flet UI, or docs must read `DASHBOARD_GUIDE.md` and keep [docs/dashboard.md](../../docs/dashboard.md) accurate after behavior changes.
 
 ## Workflow
 

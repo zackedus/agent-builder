@@ -22,6 +22,14 @@ Read this before medium or large tasks.
 - docs/known_issues.md
   Lists known bugs, risky files, deprecated modules, and unresolved decisions.
 
+- docs/dashboard.md
+  **Dashboard UI:** 5 tabs, Tab Kontrol (run/resume/doctor), Kanban, graph, cost, replay. Flet 0.85 notes.
+
+## Cursor Team (dashboard broadcast)
+
+- .cursor/team/DASHBOARD_GUIDE.md
+  Required reading for all agents (00–14) when touching Flet UI, events, or user operations.
+
 ## Cursor Memory
 
 - .cursor/memory/project_brief.md

@@ -32,6 +32,17 @@ Agents communicate through shared project files:
 
 Agents must write short structured handoffs after completing work.
 
+## Dashboard (runtime product — 2026-05-29)
+
+The **Agent Team Builder dashboard** (`agent-builder dashboard`) is the primary UI for users.
+
+- **Team broadcast (required reading for UI/workflow tasks):** [.cursor/team/DASHBOARD_GUIDE.md](.cursor/team/DASHBOARD_GUIDE.md)
+- **Technical reference:** [docs/dashboard.md](docs/dashboard.md)
+
+**Tab Kontrol** runs builds, resumes sessions, and runs doctor checks in-app. Kanban, Dependency, Cost, and Replay tabs monitor the same workspace under `AGENT_BUILDER_WORKSPACE`.
+
+When your work affects user-visible behavior, events, or Flet UI: update `docs/dashboard.md` and note it in your handoff.
+
 ## Chain of Responsibility
 
 1. Orchestrator receives task.

@@ -28,12 +28,13 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 5 — **F5.5 Replay** ✅
-- **Sprint aktif:** F5.6 Agent Chat (atau F5.7 polish)
+- **Phase:** Fase 5 — Dashboard **Kontrol tab** + docs ✅
+- **Sprint aktif:** F5.6 Agent Chat
 - **Task berikutnya:** F5.6.1 chat drawer UI
 - **Blocker aktif:** —
-- **Last commit:** (F5.5 — sesi ini)
-- **Tests:** `pytest -m "not integration"` → **213 passed**
+- **Last commit:** `be4f11c` (Kontrol tab)
+- **Tests:** `pytest -m "not integration"` → **217 passed**
+- **Docs:** `docs/dashboard.md`, `.cursor/team/DASHBOARD_GUIDE.md`
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -320,7 +321,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 ---
 
 ### Fase 5 — Dashboard Full Feature [Minggu 8-10] [~]
-**Goal:** UI dashboard lengkap dengan 4 tab + chat.
+**Goal:** UI dashboard lengkap dengan 5 tab (Kontrol + 4 monitor) + chat.
+
+#### Milestone 5.0 — Control plane (Tab Kontrol) [x]
+- [x] **F5.0.1** Tab Kontrol: run, resume, doctor dari UI
+- [x] **F5.0.2** `job_runner.py` + live event bus
+- [x] **F5.0.3** Settings dialog + terminal fallback
+- [x] **F5.0.4** Docs `docs/dashboard.md` + `DASHBOARD_GUIDE.md` + tim agent
 
 #### Milestone 5.1 — Dashboard Foundation [x]
 - [x] **F5.1.1** Flet app skeleton + routing antar tab (`dashboard/app.py`)
@@ -403,12 +410,31 @@ Total milestones per fase:
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
 
-### 2026-05-29 — F5.1 Dashboard foundation
+### 2026-05-29 — Dashboard docs + team broadcast
 **Selesai:**
-- Flet shell: 4 tabs, metrics row, activity feed, dark mode
-- `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
+- `docs/dashboard.md`, `.cursor/team/DASHBOARD_GUIDE.md`
+- `AGENTS.md`, roster, communication_protocol, release_notes, README
+- Semua agent 00–14 diinformasikan (banner + orchestrator steps)
 
 **Next:** F5.6 Agent Chat
+
+---
+
+### 2026-05-29 — Tab Kontrol (control plane)
+**Selesai:**
+- Tab Kontrol: build/resume/doctor in-app + terminal fallback
+- `dashboard/services/`, Flet 0.85 fixes
+
+**Next:** Dokumentasi + F5.6
+
+---
+
+### 2026-05-29 — F5.1 Dashboard foundation
+**Selesai:**
+- Flet shell, metrics row, activity feed, dark mode
+- `agent-builder dashboard` CLI + `DashboardStore`
+
+**Next:** F5.2 Kanban
 
 ---
 

@@ -38,13 +38,22 @@ pytest
 ruff check .
 ```
 
-### Run (Fase 1+)
+### Dashboard (recommended)
+
+```powershell
+pip install -e ".[dashboard]"
+agent-builder dashboard
+```
+
+Open **Tab Kontrol** to start builds, resume sessions, and run environment checks from the UI. See [docs/dashboard.md](docs/dashboard.md).
+
+### Run from CLI
 
 ```powershell
 agent-builder run "Buatkan aplikasi todo list dengan Flet dan SQLite"
 ```
 
-> **Note:** Orchestrator is not implemented yet. `run` validates config and confirms the prompt; full pipeline starts in Fase 1.
+Same as **Mulai build** in the dashboard Kontrol tab.
 
 ## Development
 
@@ -57,7 +66,7 @@ pre-commit run --all-files
 Optional dependency groups:
 
 - `pip install -e ".[docker]"` — Docker sandbox (Layer 2)
-- `pip install -e ".[dashboard]"` — Flet dashboard (Fase 5)
+- `pip install -e ".[dashboard]"` — Flet dashboard (5 tabs: Kontrol, Kanban, Dependency, Cost, Replay)
 
 ## Project layout
 

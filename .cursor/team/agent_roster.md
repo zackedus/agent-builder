@@ -1,5 +1,7 @@
 # AI Developer Team Roster
 
+> **Dashboard (2026-05-29):** The product dashboard has 5 tabs including **Kontrol** (run/resume/doctor). All agents: read [.cursor/team/DASHBOARD_GUIDE.md](DASHBOARD_GUIDE.md) before Flet, events, or user-workflow tasks.
+
 ## 00 - Orchestrator / Tech Lead
 
 Mission:

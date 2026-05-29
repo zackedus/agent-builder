@@ -23,10 +23,12 @@ Before assigning work:
 
 1. Read AGENTS.md.
 2. Read .cursor/team/agent_roster.md.
-3. Read docs/INDEX.md.
-4. Read docs/module_map.md.
-5. Read .cursor/memory/feature_registry.json.
-6. Search existing related implementation.
+3. Read .cursor/team/DASHBOARD_GUIDE.md (if task touches dashboard, events, or user ops).
+4. Read docs/INDEX.md.
+5. Read docs/module_map.md.
+6. Read docs/dashboard.md (if task touches Flet UI or Tab Kontrol).
+7. Read .cursor/memory/feature_registry.json.
+8. Search existing related implementation.
 
 ## Agent Routing
 

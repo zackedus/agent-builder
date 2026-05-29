@@ -1,25 +1,23 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — Tab Kontrol (full CLI dari dashboard)
+**Last updated:** 2026-05-29 — Dashboard docs + team broadcast
 
 ## Lanjut dari sini
 
 - **Phase:** Fase 5 — **F5.6** Agent Chat
-- **Dashboard:** Tab **Kontrol** = run, resume, doctor, env check
+- **Dashboard:** 5 tab — baca `docs/dashboard.md` dan `DASHBOARD_GUIDE.md`
 - **Prompt:** `lanjut` untuk F5.6
 
-## Tab dashboard
+## Dokumentasi dashboard
 
-| Tab | Fungsi |
-|-----|--------|
-| Kontrol | Build baru, resume, doctor, pengaturan |
-| Kanban | Task board |
-| Dependency | Graph |
-| Cost | Biaya |
-| Replay | Timeline |
+| File | Audiens |
+|------|---------|
+| [docs/dashboard.md](../../docs/dashboard.md) | Developer / user |
+| [.cursor/team/DASHBOARD_GUIDE.md](../team/DASHBOARD_GUIDE.md) | Semua agent 00–14 |
 
 ## Commands
 
 ```powershell
+pip install -e ".[dashboard]"
 agent-builder dashboard
 ```

@@ -65,6 +65,27 @@ agent-team-builder/
 | `agent-builder run "..."` | Ready | Starts session → PLANNING |
 | `agent-builder resume` | Ready | Load session from workspace |
 | `agent-builder status [id]` | Ready | Session table + recent events |
+| `agent-builder dashboard` | Ready | Flet UI — 5 tabs (see `docs/dashboard.md`) |
+
+### Module: dashboard (Flet UI)
+
+**Purpose:** Monitor and control build sessions (primary user interface).
+
+**Entry:** `agent-builder dashboard` → `dashboard/app.py`
+
+**Tabs:** Kontrol · Kanban · Dependency · Cost · Replay
+
+**Key paths:**
+
+- `dashboard/views/control.py` — run, resume, doctor (in-app + terminal fallback)
+- `dashboard/services/job_runner.py` — asyncio orchestrator from UI
+- `dashboard/state/store.py` — `DashboardStore`, replay position, job status
+- `dashboard/views/kanban.py`, `dependency_graph.py`, `cost_breakdown.py`, `replay.py`
+- `replay/` — event sourcing for timeline rewind
+
+**Docs:** [docs/dashboard.md](dashboard.md), [.cursor/team/DASHBOARD_GUIDE.md](../.cursor/team/DASHBOARD_GUIDE.md)
+
+**Related:** `core/event_bus.py`, `core/events_store.py`, all runtime `agents/*`
 
 ### Module: agent-builder-package
 
