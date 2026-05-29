@@ -3,8 +3,8 @@
 **Project:** Agent Team Builder
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
-**Last updated:** 2026-05-29 (sesi disimpan — siap dilanjutkan)
-**Current phase:** Fase 4 — Indexer (F4.1.1–4.4, 4.6 ✅)
+**Last updated:** 2026-05-29
+**Current phase:** Fase 4 — DevOps (F4.3 ✅)
 
 ---
 
@@ -28,13 +28,13 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 3 — Milestone **3.4** ✅ (E2E todo + self-correction mocked)
-- **Fase 2:** ✅ selesai (Planner → Coder → E2E calculator mocked)
-- **Sprint aktif:** Fase 3 selesai core; lanjut F3.1.3 atau Fase 4
-- **Task berikutnya:** F4.3 DevOps, atau F4.1.7 perf test
+- **Phase:** Fase 4 — **F4.3 DevOps** ✅
+- **Fase 3:** ✅ selesai (E2E todo + self-correction)
+- **Sprint aktif:** F4.4 Docker sandbox Layer 2, atau F4.5 Enhanced Coder
+- **Task berikutnya:** F4.4.1 `docker_sandbox.py`, F4.1.7 perf test, atau F4.5 Indexer→Coder
 - **Blocker aktif:** —
-- **Last commit:** `466addb` di `origin/master` (+ perubahan F3.4 belum di-commit)
-- **Tests:** `pytest -m "not integration"` → **159 passed**
+- **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
+- **Tests:** `pytest -m "not integration"` → **166 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -283,13 +283,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F4.2.4** Pass design.json ke Coder sebagai context
 - [x] **F4.2.5** Test: form, list, navigation, chart screens
 
-#### Milestone 4.3 — DevOps Agent [ ]
-- [ ] **F4.3.1** Implement `agents/devops.py`
-- [ ] **F4.3.2** Dependency lock generation
-- [ ] **F4.3.3** PyInstaller spec generator
-- [ ] **F4.3.4** Build executor (sandbox Layer 2)
-- [ ] **F4.3.5** Smoke test executable
-- [ ] **F4.3.6** Package + checksum + README
+#### Milestone 4.3 — DevOps Agent [x]
+- [x] **F4.3.1** Implement `agents/devops.py`
+- [x] **F4.3.2** Dependency lock generation (`devops/lockfile.py`)
+- [x] **F4.3.3** PyInstaller spec generator (`devops/spec_builder.py`)
+- [x] **F4.3.4** Build executor — subprocess Layer 1 (`devops/build_executor.py`); Docker Layer 2 → F4.4
+- [x] **F4.3.5** Smoke test executable
+- [x] **F4.3.6** Package + checksum + README (`devops/packager.py`, `orchestrator.execute_deploying`)
 
 #### Milestone 4.4 — Sandbox Layer 2 [ ]
 - [ ] **F4.4.1** Implement `sandbox/docker_sandbox.py`
@@ -404,13 +404,23 @@ Total milestones per fase:
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
 
+### 2026-05-29 — F4.3 DevOps Agent
+**Selesai:**
+- `devops/` package: lockfile, spec_builder, build_executor, packager, models
+- `agents/devops.py`, `orchestrator.execute_deploying()`
+- Unit tests: lockfile, spec, packager, agent; E2E pipeline reaches DONE
+
+**Next:** F4.4 Docker sandbox Layer 2
+
+---
+
 ### 2026-05-29 — F4.2 UI/UX Designer
 **Selesai:**
 - `agents/designer.py`, `design_models.py`, `design_parser.py`, `llm/prompts/designer.txt`
 - `execute_designing()` di orchestrator; Coder membaca `designs/{task_id}.json`
 - Tests: form, list, navigation, chart screen patterns
 
-**Next:** F4.3 DevOps
+**Next:** F4.4 Docker sandbox atau F4.5 Enhanced Coder
 
 ---
 

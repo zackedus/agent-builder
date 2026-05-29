@@ -8,6 +8,7 @@ from typing import TYPE_CHECKING, Any
 from agent_builder.agents.base import AgentContext
 from agent_builder.agents.coder import CoderAgent
 from agent_builder.agents.designer import DesignerAgent
+from agent_builder.agents.devops import DevOpsAgent
 from agent_builder.agents.indexer import IndexerAgent
 from agent_builder.agents.planner import PlannerAgent
 from agent_builder.agents.review_models import ReviewResult
@@ -21,6 +22,7 @@ from agent_builder.core.event_bus import Event, EventBus, EventType
 from agent_builder.core.exceptions import StateNotFoundError, StateTransitionError
 from agent_builder.core.state import OrchestratorState, Plan, PlanTask, SessionState
 from agent_builder.core.workspace import Workspace
+from agent_builder.devops.models import BuildReport
 from agent_builder.indexing.watcher import ProjectIndexWatcher
 
 if TYPE_CHECKING:
@@ -553,13 +555,56 @@ class Orchestrator:
                 continue
 
             if state == OrchestratorState.DEPLOYING:
-                self.dispatch(OrchestratorEvent.BUILT)
+                ok = await self.execute_deploying()
+                if not ok:
+                    break
                 continue
 
             break
 
         assert self.session is not None
         return self.session
+
+    async def execute_deploying(self) -> bool:
+        """Run DevOps packaging and transition to DONE."""
+        if self.session is None:
+            raise StateNotFoundError("No active session")
+        if self.session.current_state != OrchestratorState.DEPLOYING:
+            raise StateTransitionError(
+                f"execute_deploying requires DEPLOYING, got {self.session.current_state}"
+            )
+
+        plan = self.workspace.load_plan()
+        devops = DevOpsAgent(self.router(), self.workspace, settings=self.settings)
+        context = AgentContext(
+            session_id=self.session.session_id,
+            user_prompt=self.session.user_prompt,
+            extra={"plan": plan},
+        )
+        result = await devops.run(context)
+
+        if result.success:
+            build_report = result.data.get("build_report")
+            package_path = (
+                build_report.package_path if isinstance(build_report, BuildReport) else None
+            )
+            self.dispatch(
+                OrchestratorEvent.BUILT,
+                TransitionContext(payload={"package": package_path}),
+            )
+            return True
+
+        self.event_bus.publish_sync(
+            Event(
+                type=EventType.TASK_FAILED,
+                session_id=self.session.session_id,
+                payload={
+                    "error": result.output or result.errors,
+                    "agent": "devops",
+                },
+            )
+        )
+        return False
 
     def finalize_session_metrics(self) -> None:
         """Persist LLM call count, cost, and elapsed time on the session."""
