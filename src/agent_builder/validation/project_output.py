@@ -185,6 +185,111 @@ async def validate_project_output(
     return outcome
 
 
+SELF_CORRECTION_EVENTS = frozenset({"tests_fail", "changes_requested"})
+
+
+def count_self_corrections(events: list[Event]) -> int:
+    """Count TESTING/REVIEWING → CODING retry transitions in persisted events."""
+    count = 0
+    for event in events:
+        if event.type != EventType.STATE_CHANGED:
+            continue
+        if event.payload.get("event") not in SELF_CORRECTION_EVENTS:
+            continue
+        from_state = event.payload.get("from")
+        to_state = event.payload.get("to")
+        if from_state in ("TESTING", "REVIEWING") and to_state == "CODING":
+            count += 1
+    return count
+
+
+def assert_flet_entrypoint(project_dir: Path, *, entry_name: str = "main.py") -> None:
+    """Assert the Flet entry script parses and references ``flet`` (no GUI launch)."""
+    entry = project_dir / entry_name
+    if not entry.is_file():
+        raise AssertionError(f"Missing entry script: {entry_name}")
+    source = entry.read_text(encoding="utf-8")
+    tree = ast.parse(source, filename=str(entry))
+    if "flet" not in source and "ft" not in source:
+        raise AssertionError(f"{entry_name} does not reference Flet")
+    has_launch = any(
+        isinstance(node, ast.Call)
+        and (
+            (isinstance(node.func, ast.Attribute) and node.func.attr == "app")
+            or (isinstance(node.func, ast.Name) and node.func.id == "app")
+        )
+        for node in ast.walk(tree)
+    )
+    if not has_launch:
+        raise AssertionError(f"{entry_name} has no ft.app() launch call")
+
+
+@dataclass
+class TodoCrudValidation:
+    """Outcome of headless todo CRUD checks via ``main.py --cli``."""
+
+    steps_ok: bool = True
+    errors: list[str] = field(default_factory=list)
+
+
+async def validate_todo_crud(
+    project_dir: Path,
+    *,
+    sandbox: SubprocessSandbox | None = None,
+) -> TodoCrudValidation:
+    """Run add/list/complete/filter/delete against generated todo project."""
+    from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox as _Sandbox
+
+    entry = project_dir / "main.py"
+    outcome = TodoCrudValidation()
+    if not entry.is_file():
+        outcome.steps_ok = False
+        outcome.errors.append("main.py not found")
+        return outcome
+
+    db_path = project_dir / "todo.db"
+    if db_path.is_file():
+        db_path.unlink()
+
+    sb = sandbox or _Sandbox(project_dir)
+
+    async def run_step(
+        args: list[str],
+        *,
+        expect_in_stdout: str | None = None,
+        must_not_contain: str | None = None,
+    ) -> str:
+        code, stdout, stderr, blocked, reason = await run_entry_script(sb, entry, ["--cli", *args])
+        if blocked:
+            outcome.steps_ok = False
+            outcome.errors.append(f"blocked {args}: {reason}")
+            return stdout
+        if code != 0:
+            outcome.steps_ok = False
+            outcome.errors.append(f"exit {code} for {args}: {stderr or stdout}")
+            return stdout
+        if expect_in_stdout and expect_in_stdout not in stdout:
+            outcome.steps_ok = False
+            outcome.errors.append(
+                f"expected {expect_in_stdout!r} in stdout for {args}, got {stdout!r}"
+            )
+        if must_not_contain and must_not_contain in stdout:
+            outcome.steps_ok = False
+            outcome.errors.append(
+                f"did not expect {must_not_contain!r} in stdout for {args}, got {stdout!r}"
+            )
+        return stdout
+
+    await run_step(["add", "Buy milk"], expect_in_stdout="added:")
+    await run_step(["list"], expect_in_stdout="Buy milk")
+    await run_step(["complete", "1"], expect_in_stdout="ok")
+    await run_step(["list", "--filter", "done"], expect_in_stdout="Buy milk")
+    await run_step(["list", "--filter", "active"], must_not_contain="Buy milk")
+    await run_step(["delete", "1"], expect_in_stdout="ok")
+    await run_step(["list"], must_not_contain="Buy milk")
+    return outcome
+
+
 def assert_calculator_output(stdout: str, expected: float, *, tolerance: float = 1e-6) -> None:
     """Assert *stdout* contains a numeric result close to *expected*."""
     tokens = stdout.replace(",", " ").split()

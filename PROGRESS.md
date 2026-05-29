@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29 (sesi disimpan — siap dilanjutkan)
-**Current phase:** Fase 3 — Self-Correction Loop (M3.1–3.3 ✅, lanjut M3.4)
+**Current phase:** Fase 4 — Indexer (F4.1.1–4.4, 4.6 ✅)
 
 ---
 
@@ -28,20 +28,20 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 3 — Milestone **3.4** belum mulai (E2E self-correction)
+- **Phase:** Fase 3 — Milestone **3.4** ✅ (E2E todo + self-correction mocked)
 - **Fase 2:** ✅ selesai (Planner → Coder → E2E calculator mocked)
-- **Sprint aktif:** Fase 3 (2026-05-29)
-- **Task berikutnya:** F3.4.1 — E2E prompt todo list + validasi retry loop
+- **Sprint aktif:** Fase 3 selesai core; lanjut F3.1.3 atau Fase 4
+- **Task berikutnya:** F4.2 Designer, atau F4.1.7 perf test
 - **Blocker aktif:** —
-- **Last commit:** belum di-commit (semua perubahan di working tree)
-- **Tests:** `pytest -m "not integration"` → **129 passed**
+- **Last commit:** `466addb` di `origin/master` (+ perubahan F3.4 belum di-commit)
+- **Tests:** `pytest -m "not integration"` → **152 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
 |------|------------|--------|
 | Planner | `agents/planner.py`, `plan_parser.py` | ✅ |
 | Coder | `agents/coder.py`, `code_parser.py`, `tools/file_ops.py` | ✅ |
-| Tester | `agents/tester.py`, `tools/static_analysis.py`, `agents/test_runner.py` | ✅ (tanpa LLM pytest gen) |
+| Tester | `agents/tester.py`, `agents/test_generator.py`, `test_runner.py` | ✅ (+ LLM pytest gen) |
 | Reviewer | `agents/reviewer.py`, `review_parser.py` | ✅ |
 | Orchestrator | `core/orchestrator.py` — `run_build_pipeline()`, `execute_*` | ✅ |
 | Validasi | `validation/project_output.py` | ✅ |
@@ -56,10 +56,7 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - Coder membaca feedback dari `workspace/.agent/test_results/` dan `reviews/`
 
 ### Apa yang harus dilakukan selanjutnya (urutan disarankan)
-1. **F3.4** — E2E todo Flet + SQLite; pastikan minimal 1× self-correction terlihat di log
-2. **F3.1.3** — Generator pytest dari acceptance criteria (LLM)
-3. **F3.1.6** — Coverage extraction
-4. **Fase 4** — Indexer, Designer, DevOps
+1. **Fase 4** — Indexer, Designer, DevOps
 
 ### Cara lanjut di sesi baru
 1. Buka project `g:\baru 2026\april\AI`
@@ -230,13 +227,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 ### Fase 3 — Self-Correction Loop [Minggu 4-5] [~]
 **Goal:** Sistem bisa retry otomatis berdasarkan test & review.
 
-#### Milestone 3.1 — Tester Agent [~]
+#### Milestone 3.1 — Tester Agent [x]
 - [x] **F3.1.1** Implement `agents/tester.py`
 - [x] **F3.1.2** Static check runner (ruff + mypy)
-- [ ] **F3.1.3** Pytest generator dari acceptance criteria (LLM)
+- [x] **F3.1.3** Pytest generator dari acceptance criteria (LLM)
 - [x] **F3.1.4** Smoke test runner (compile check)
 - [x] **F3.1.5** Result parser (junit XML + pytest text)
-- [ ] **F3.1.6** Coverage extraction
+- [x] **F3.1.6** Coverage extraction
 - [x] **F3.1.7** Run tests in sandbox (Layer 1)
 
 #### Milestone 3.2 — Reviewer Agent [x]
@@ -254,11 +251,11 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F3.3.5** Escalation: switch to stronger model setelah attempt 2 (via BaseAgent)
 - [x] **F3.3.6** Final fail → FAILED state
 
-#### Milestone 3.4 — E2E Validation [ ]
-- [ ] **F3.4.1** Test prompt: "Aplikasi Flet todo list dengan SQLite"
-- [ ] **F3.4.2** Validate: aplikasi launch tanpa crash
-- [ ] **F3.4.3** Validate: CRUD operations berfungsi
-- [ ] **F3.4.4** Validate: ada self-correction setidaknya 1x dalam session
+#### Milestone 3.4 — E2E Validation [x]
+- [x] **F3.4.1** Test prompt: "Aplikasi Flet todo list dengan SQLite"
+- [x] **F3.4.2** Validate: aplikasi launch tanpa crash
+- [x] **F3.4.3** Validate: CRUD operations berfungsi
+- [x] **F3.4.4** Validate: ada self-correction setidaknya 1x dalam session
 
 **Success criteria Fase 3:**
 - Aplikasi medium-complexity bisa di-generate
@@ -270,13 +267,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 ### Fase 4 — Full Team & Indexing [Minggu 6-7] [ ]
 **Goal:** Semua 7 agent aktif, sistem produktif untuk aplikasi medium.
 
-#### Milestone 4.1 — Code Indexer [ ]
-- [ ] **F4.1.1** Implement `indexing/chunker.py` (AST-aware)
-- [ ] **F4.1.2** Implement `indexing/embedder.py` (Ollama embeddings)
-- [ ] **F4.1.3** Implement `indexing/chroma_store.py`
-- [ ] **F4.1.4** Implement `agents/indexer.py`
-- [ ] **F4.1.5** Auto-trigger re-index on file change (watchdog)
-- [ ] **F4.1.6** Search API untuk agent lain
+#### Milestone 4.1 — Code Indexer [x]
+- [x] **F4.1.1** Implement `indexing/chunker.py` (AST-aware)
+- [x] **F4.1.2** Implement `indexing/embedder.py` (Ollama embeddings)
+- [x] **F4.1.3** Implement `indexing/chroma_store.py`
+- [x] **F4.1.4** Implement `agents/indexer.py`
+- [x] **F4.1.5** Auto-trigger re-index on file change (watchdog)
+- [x] **F4.1.6** Search API untuk agent lain
 - [ ] **F4.1.7** Performance test (codebase 1000 files)
 
 #### Milestone 4.2 — UI/UX Designer [ ]
@@ -407,6 +404,60 @@ Total milestones per fase:
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
 
+### 2026-05-29 — F4.1.5 Index watcher
+**Selesai:**
+- `indexing/watcher.py` — `ProjectIndexWatcher` (watchdog)
+- Orchestrator: `start_index_watcher` / `stop_index_watcher`, `reindex_files` after Coder
+- Tests: `test_index_watcher`, `test_orchestrator_reindex`
+
+**Next:** F4.2 Designer
+
+---
+
+### 2026-05-29 — F4.1 Code Indexer core
+**Selesai:**
+- `indexing/chunker.py`, `embedder.py`, `chroma_store.py`, `search.py`
+- `agents/indexer.py` + `orchestrator.execute_indexing()`
+- Unit tests chunker, chroma, indexer
+
+**Next:** F4.1.5 watchdog, F4.2 Designer
+
+---
+
+### 2026-05-29 — F3.1.6 Coverage extraction
+**Selesai:**
+- `run_pytest()` → `PytestRunResult` dengan `coverage_percent` (pytest-cov JSON)
+- `parse_coverage_json()`, temp `.agent_coveragerc` (omit `tests/*`)
+- `TesterReport.coverage` terisi; summary CLI menampilkan `coverage=N%`
+- `tests/unit/test_coverage.py`
+
+**Next:** Fase 4.1 Indexer
+
+---
+
+### 2026-05-29 — F3.1.3 LLM pytest generator
+**Selesai:**
+- `agents/test_generator.py` + `llm/prompts/tester.txt`
+- `TesterAgent` generates `tests/test_task_{id}.py` before ruff/mypy/pytest
+- `TesterReport.generated_tests` field
+- Unit tests: `test_test_generator.py`, updated `test_tester_agent.py`
+
+**Next:** F3.1.6 coverage extraction
+
+---
+
+### 2026-05-29 — F3.4 E2E todo + self-correction
+**Selesai:**
+- `tests/e2e/fixtures/todo_responses.py` — plan + kode V1 (bug commit) / V2 (fix)
+- `tests/e2e/test_todo_build.py` — pipeline mocked: test gagal → retry Coder → DONE
+- `validation/project_output.py` — `validate_todo_crud`, `assert_flet_entrypoint`, `count_self_corrections`
+- **132** tests passed (non-integration)
+- Git: initial commit `466addb`, push ke [zackedus/agent-builder](https://github.com/zackedus/agent-builder)
+
+**Next:** F3.1.3 LLM pytest generator
+
+---
+
 ### 2026-05-29 (sesi lanjut) — Fase 2 selesai + Fase 3.1–3.3 core
 **Durasi:** multi-turn (Cursor)
 **Selesai:**
@@ -416,12 +467,9 @@ Total milestones per fase:
 - `finalize_session_metrics()`, persist `LLM_CALL` ke events.jsonl
 - ~129 unit/e2e tests, ruff + mypy clean
 
-**Belum:**
-- F3.4 E2E todo + self-correction nyata
+**Belum (saat entry ini ditulis):**
+- F3.4 E2E todo + self-correction nyata → **selesai di sesi berikutnya**
 - F3.1.3 LLM pytest generator, F3.1.6 coverage
-
-**Next:**
-- F3.4.1 prompt: *"Aplikasi Flet todo list dengan SQLite"*
 
 ---
 

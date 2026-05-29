@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 from agent_builder.agents.base import AgentContext
 from agent_builder.agents.coder import CoderAgent
+from agent_builder.agents.indexer import IndexerAgent
 from agent_builder.agents.planner import PlannerAgent
 from agent_builder.agents.review_models import ReviewResult
 from agent_builder.agents.review_parser import format_review_feedback
@@ -19,8 +20,10 @@ from agent_builder.core.event_bus import Event, EventBus, EventType
 from agent_builder.core.exceptions import StateNotFoundError, StateTransitionError
 from agent_builder.core.state import OrchestratorState, Plan, PlanTask, SessionState
 from agent_builder.core.workspace import Workspace
+from agent_builder.indexing.watcher import ProjectIndexWatcher
 
 if TYPE_CHECKING:
+    from agent_builder.agents.indexer import IndexerAgent
     from agent_builder.llm.router import LLMRouter
 
 
@@ -111,6 +114,7 @@ class Orchestrator:
         self.event_bus = event_bus or EventBus(events_store=workspace.events_store())
         self.settings = settings or get_settings()
         self.session: SessionState | None = None
+        self._index_watcher: ProjectIndexWatcher | None = None
 
     def router(self) -> LLMRouter:
         from agent_builder.llm.router import LLMRouter
@@ -195,8 +199,60 @@ class Orchestrator:
             TransitionContext(task_id=nxt.id, payload={"task_id": nxt.id}),
         )
 
+    def _indexer(self) -> IndexerAgent:
+        return IndexerAgent(self.router(), self.workspace, settings=self.settings)
+
+    async def reindex_files(self, paths: list[str]) -> int:
+        """Re-index specific project files (e.g. after Coder writes)."""
+        rel_paths = [p.replace("\\", "/") for p in paths if p.strip()]
+        if not rel_paths:
+            return 0
+        return await self._indexer().index_project(paths=rel_paths)
+
+    def start_index_watcher(self) -> None:
+        """Watch ``project/`` for ``.py`` changes during a build session."""
+        self.workspace.ensure_layout()
+        if self._index_watcher is None:
+            self._index_watcher = ProjectIndexWatcher(self.workspace.project_dir)
+        self._index_watcher.start()
+
+    async def stop_index_watcher(self) -> None:
+        """Flush pending watcher paths and stop the observer."""
+        if self._index_watcher is None:
+            return
+        await self._index_watcher.flush(self._indexer())
+        self._index_watcher.stop()
+        self._index_watcher = None
+
+    async def execute_indexing(self) -> bool:
+        """Run Indexer for the current task files, then advance the FSM."""
+        if self.session is None:
+            raise StateNotFoundError("No active session")
+        if self.session.current_state != OrchestratorState.INDEXING:
+            raise StateTransitionError(
+                f"execute_indexing requires INDEXING, got {self.session.current_state}"
+            )
+
+        plan = self.workspace.load_plan()
+        plan_task = self._current_plan_task(plan) if plan else None
+        requires_design = plan_task is not None and plan_task.type == "ui"
+        paths = list(plan_task.files_affected) if plan_task and plan_task.files_affected else None
+
+        indexer = self._indexer()
+        context = AgentContext(
+            session_id=self.session.session_id,
+            user_prompt=self.session.user_prompt,
+            task_id=plan_task.id if plan_task else None,
+            task_title=plan_task.title if plan_task else "",
+            extra={"files_to_index": paths},
+        )
+        await indexer.run(context)
+
+        self.complete_indexing(requires_design=requires_design)
+        return True
+
     def complete_indexing(self, *, requires_design: bool = False) -> SessionState:
-        """Stub indexer: jump to DESIGNING or CODING (Fase 3 will run real indexer)."""
+        """Transition from INDEXING to DESIGNING or CODING."""
         return self.dispatch(
             OrchestratorEvent.INDEXING_DONE,
             TransitionContext(requires_design=requires_design),
@@ -237,13 +293,16 @@ class Orchestrator:
         result = await coder.run(context)
 
         if result.success:
+            written_files = list(result.data.get("files", []))
             self.dispatch(
                 OrchestratorEvent.CODE_WRITTEN,
                 TransitionContext(
                     task_id=plan_task.id,
-                    payload={"files": result.data.get("files", [])},
+                    payload={"files": written_files},
                 ),
             )
+            if written_files:
+                await self.reindex_files(written_files)
             return True
 
         self.event_bus.publish_sync(
@@ -387,6 +446,18 @@ class Orchestrator:
         if auto_approve and self.session.current_state == OrchestratorState.PLAN_APPROVAL:
             self.approve_plan()
 
+        self.start_index_watcher()
+        try:
+            session = await self._run_build_loop()
+        finally:
+            await self.stop_index_watcher()
+
+        self.finalize_session_metrics()
+        assert session is not None
+        return session
+
+    async def _run_build_loop(self) -> SessionState:
+        """Inner task loop (called under an active index watcher)."""
         while self.session is not None and not self.session.is_terminal():
             state = OrchestratorState(self.session.current_state)
 
@@ -395,10 +466,7 @@ class Orchestrator:
                 continue
 
             if state == OrchestratorState.INDEXING:
-                plan = self.workspace.load_plan()
-                task = self._current_plan_task(plan) if plan else None
-                requires_design = task is not None and task.type == "ui"
-                self.complete_indexing(requires_design=requires_design)
+                await self.execute_indexing()
                 continue
 
             if state == OrchestratorState.DESIGNING:
@@ -437,7 +505,6 @@ class Orchestrator:
 
             break
 
-        self.finalize_session_metrics()
         assert self.session is not None
         return self.session
 

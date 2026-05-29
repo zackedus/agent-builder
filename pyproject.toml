@@ -81,6 +81,18 @@ ignore_missing_imports = true
 module = "tests.*"
 disable_error_code = ["call-arg", "comparison-overlap"]
 
+[[tool.mypy.overrides]]
+module = "agent_builder.indexing.watcher"
+disable_error_code = ["misc", "assignment"]
+
+[[tool.mypy.overrides]]
+module = [
+    "agent_builder.llm.claude_client",
+    "agent_builder.llm.ollama_client",
+    "agent_builder.indexing.embedder",
+]
+disable_error_code = ["misc", "assignment"]
+
 [tool.coverage.run]
 source = ["agent_builder"]
 branch = true

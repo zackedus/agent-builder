@@ -1,35 +1,29 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — **SESION DISIMPAN** (handoff)
+**Last updated:** 2026-05-29 — F4.1.5 watcher selesai
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 3 — Milestone **3.4** (E2E self-correction) — **BELUM** dikerjakan
-- **Selesai:** Fase 0–2 penuh; Fase 3.1–3.3 (Tester, Reviewer, retry loop)
-- **Prompt user berikutnya:** `lanjut` atau *Lanjut F3.4 E2E todo*
+- **Phase:** Fase 4 — **F4.2** UI/UX Designer (`agents/designer.py`)
+- **Selesai:** Milestone 4.1 Indexer penuh (kecuali F4.1.7 perf test)
+- **Prompt:** `lanjut` atau *Lanjut F4.2 Designer*
 
-## File penting
+## Indexer + watcher
 
-| Tujuan | Path |
-|--------|------|
-| Progress & checklist | `PROGRESS.md` §1 |
-| Orchestrator FSM | `src/agent_builder/core/orchestrator.py` |
-| Tester | `src/agent_builder/agents/tester.py` |
-| Reviewer | `src/agent_builder/agents/reviewer.py` |
-| Spesifikasi | `ARCHITECTURE.md` |
+| API | Path |
+|-----|------|
+| Watcher | `indexing/watcher.py` — `ProjectIndexWatcher` |
+| Re-index | `orchestrator.reindex_files()` after Coder |
+| Search | `indexing/search.py` — `search_relevant_files()` |
 
-## Commands cepat
+Build pipeline starts watcher at loop entry, flushes on exit.
+
+## Commands
 
 ```powershell
-cd "g:\baru 2026\april\AI"
-.\.venv\Scripts\Activate.ps1
-pytest -m "not integration" -q          # harus 129 passed
-agent-builder doctor
-agent-builder run "Buatkan CLI calculator 2 angka + operasi"  # butuh API key
+pytest -m "not integration" -q   # 152 passed
 ```
 
-## State repo
+## State
 
-- Git: **belum commit**
-- venv: `.venv/`
-- Tests: 129 passed (non-integration)
+- Git: uncommitted (F3.4–F4.1.5)

@@ -125,8 +125,7 @@ def run_cmd(
     settings = get_settings()
     if not settings.anthropic_configured():
         console.print(
-            "[red]Error:[/red] ANTHROPIC_API_KEY is not set. "
-            "Run [bold]agent-builder doctor[/bold]."
+            "[red]Error:[/red] ANTHROPIC_API_KEY is not set. Run [bold]agent-builder doctor[/bold]."
         )
         raise typer.Exit(code=1)
 

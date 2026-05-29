@@ -3,6 +3,7 @@
 from __future__ import annotations
 
 from agent_builder.agents.base import AgentContext, AgentResult, BaseAgent
+from agent_builder.agents.test_generator import TestGenerateError, generate_pytest_for_task
 from agent_builder.agents.test_models import TesterReport
 from agent_builder.agents.test_runner import (
     aggregate_test_status,
@@ -32,10 +33,27 @@ class TesterAgent(BaseAgent):
         project_dir = self.workspace.project_dir
         sandbox = SubprocessSandbox(project_dir)
 
+        generated_tests: list[str] = []
+        generation_error: str | None = None
+        if plan_task is not None:
+            try:
+                written = await generate_pytest_for_task(
+                    self.router,
+                    self.workspace,
+                    context,
+                    plan_task,
+                )
+                if written is not None:
+                    rel = str(written.relative_to(project_dir)).replace("\\", "/")
+                    generated_tests.append(rel)
+            except TestGenerateError as exc:
+                generation_error = str(exc)
+
         ruff = await run_ruff(project_dir, sandbox)
         mypy = await run_mypy(project_dir, sandbox)
         smoke_status, smoke_out = await run_smoke_import(project_dir, sandbox)
-        pytest_summary = await run_pytest(project_dir, sandbox)
+        pytest_run = await run_pytest(project_dir, sandbox)
+        pytest_summary = pytest_run.summary
 
         static_checks = {
             "ruff": ruff.status,
@@ -43,14 +61,23 @@ class TesterAgent(BaseAgent):
         }
         status = aggregate_test_status(static_checks, smoke_status, pytest_summary)
 
+        static_output: dict[str, str] = {
+            "ruff": ruff.output,
+            "mypy": mypy.output,
+        }
+        if generation_error:
+            static_output["test_generation"] = generation_error
+
         result = TesterReport(
             task_id=task_id,
             status=status,  # type: ignore[arg-type]
             static_checks=static_checks,
-            static_output={"ruff": ruff.output, "mypy": mypy.output},
+            static_output=static_output,
             tests=pytest_summary,
             smoke=smoke_status,
             smoke_output=smoke_out,
+            generated_tests=generated_tests,
+            coverage=pytest_run.coverage_percent,
         )
 
         self._save_result(task_id, result)
@@ -79,8 +106,12 @@ def _format_summary(result: TesterReport) -> str:
         f"mypy={result.static_checks.get('mypy', '?')}",
         f"smoke={result.smoke}",
     ]
+    if result.generated_tests:
+        parts.append(f"generated={','.join(result.generated_tests)}")
     if result.tests.total:
         parts.append(f"pytest={result.tests.passed}/{result.tests.total}")
+    if result.coverage is not None:
+        parts.append(f"coverage={result.coverage}%")
     if result.tests.failures:
         parts.append(result.tests.failures[0].error[:200])
     return "; ".join(parts)

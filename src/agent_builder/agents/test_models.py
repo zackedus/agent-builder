@@ -35,6 +35,7 @@ class TesterReport(BaseModel):
     tests: TestRunSummary = Field(default_factory=TestRunSummary)
     smoke: CheckStatus = "skipped"
     smoke_output: str = ""
+    generated_tests: list[str] = Field(default_factory=list)
     coverage: float | None = None
 
     def is_passing(self) -> bool:
