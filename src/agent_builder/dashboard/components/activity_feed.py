@@ -5,6 +5,7 @@ from __future__ import annotations
 from typing import Any
 
 from agent_builder.core.event_bus import Event, EventType
+from agent_builder.dashboard.flet_ui import border_all
 from agent_builder.dashboard.state.store import DashboardStore
 from agent_builder.dashboard.theme import DashboardThemeTokens
 
@@ -47,7 +48,7 @@ def build_activity_feed(store: DashboardStore, tokens: DashboardThemeTokens) -> 
     return ft.Container(
         height=140,
         bgcolor=tokens.feed_background,
-        border=ft.border.all(1, tokens.border),
+        border=border_all(1, tokens.border),
         border_radius=8,
         padding=10,
         content=ft.Column(

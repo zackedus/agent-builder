@@ -32,7 +32,7 @@ dev = [
 ]
 docker = ["docker>=7.0.0"]
 dashboard = [
-    "flet>=0.24.0",
+    "flet>=0.24.0,<1",
     "matplotlib>=3.8.0",
     "networkx>=3.2.0",
 ]

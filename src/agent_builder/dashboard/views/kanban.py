@@ -12,6 +12,7 @@ def build_kanban_view(store: DashboardStore, tokens: DashboardThemeTokens) -> An
     import flet as ft
 
     tasks = store.session.tasks if store.session else []
+    body: Any
     if not tasks and store.plan:
         summary = ", ".join(t.id for t in store.plan.tasks[:8]) or "—"
         body = ft.Text(
