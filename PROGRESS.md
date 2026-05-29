@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 5 — Dashboard (F5.2 ✅)
+**Current phase:** Fase 5 — Dashboard (F5.3 ✅)
 
 ---
 
@@ -28,12 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 5 — **F5.2 Kanban view** ✅
-- **Sprint aktif:** F5.3 Dependency graph
-- **Task berikutnya:** F5.3.1 custom Flet canvas component
+- **Phase:** Fase 5 — **F5.3 Dependency graph** ✅
+- **Sprint aktif:** F5.4 Cost breakdown
+- **Task berikutnya:** F5.4.1 top metrics row
 - **Blocker aktif:** —
-- **Last commit:** (F5.2 — sesi ini)
-- **Tests:** `pytest -m "not integration"` → **194 passed**
+- **Last commit:** (F5.3 — sesi ini)
+- **Tests:** `pytest -m "not integration"` → **203 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -338,11 +338,11 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F5.2.6** Blocker resolution dialog
 
 #### Milestone 5.3 — Dependency Graph (Tab 2) [ ]
-- [ ] **F5.3.1** Custom Flet canvas component
-- [ ] **F5.3.2** Sugiyama layered layout algorithm
-- [ ] **F5.3.3** Critical path computation
-- [ ] **F5.3.4** Interaksi: click, hover, zoom, pan
-- [ ] **F5.3.5** Filter: by status, by agent
+- [x] **F5.3.1** Custom Flet canvas component
+- [x] **F5.3.2** Sugiyama layered layout algorithm
+- [x] **F5.3.3** Critical path computation
+- [x] **F5.3.4** Interaksi: click, hover, zoom, pan
+- [x] **F5.3.5** Filter: by status, by agent
 
 #### Milestone 5.4 — Cost Breakdown (Tab 3) [ ]
 - [ ] **F5.4.1** Top metrics row
@@ -408,7 +408,18 @@ Total milestones per fase:
 - Flet shell: 4 tabs, metrics row, activity feed, dark mode
 - `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
 
-**Next:** F5.3 Dependency graph
+**Next:** F5.4 Cost breakdown
+
+---
+
+### 2026-05-29 — F5.3 Dependency graph
+**Selesai:**
+- `graph/sugiyama_layout.py`, `graph/filters.py` — layout + filter
+- `dependency_graph_canvas.py` — `flet.canvas` edges + node stack
+- Tab Dependency: filter dropdown, zoom/pan, klik node → `select_task`
+- Unit tests layout, filters, canvas smoke
+
+**Next:** F5.4 Cost breakdown (Tab 3)
 
 ---
 

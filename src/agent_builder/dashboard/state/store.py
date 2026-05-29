@@ -24,6 +24,12 @@ class DashboardStore:
         self.dark_mode: bool = False
         self.active_tab: int = 0
         self.selected_task_id: str | None = None
+        self.graph_status_filter: str = "all"
+        self.graph_agent_filter: str = "all"
+        self.graph_show_completed: bool = True
+        self.graph_zoom: float = 1.0
+        self.graph_pan_x: float = 0.0
+        self.graph_pan_y: float = 0.0
         self._listeners: list[Listener] = []
         self._event_bus: EventBus | None = None
 
@@ -40,6 +46,48 @@ class DashboardStore:
         if task_id == self.selected_task_id:
             return
         self.selected_task_id = task_id
+        self._notify()
+
+    def set_graph_filters(
+        self,
+        *,
+        status: str | None = None,
+        agent: str | None = None,
+        show_completed: bool | None = None,
+    ) -> None:
+        changed = False
+        if status is not None and status != self.graph_status_filter:
+            self.graph_status_filter = status
+            changed = True
+        if agent is not None and agent != self.graph_agent_filter:
+            self.graph_agent_filter = agent
+            changed = True
+        if show_completed is not None and show_completed != self.graph_show_completed:
+            self.graph_show_completed = show_completed
+            changed = True
+        if changed:
+            self._notify()
+
+    def set_graph_zoom(self, zoom: float) -> None:
+        clamped = max(0.4, min(2.5, zoom))
+        if clamped == self.graph_zoom:
+            return
+        self.graph_zoom = clamped
+        self._notify()
+
+    def adjust_graph_pan(self, dx: float, dy: float) -> None:
+        if dx == 0 and dy == 0:
+            return
+        self.graph_pan_x += dx
+        self.graph_pan_y += dy
+        self._notify()
+
+    def reset_graph_view(self) -> None:
+        if self.graph_zoom == 1.0 and self.graph_pan_x == 0.0 and self.graph_pan_y == 0.0:
+            return
+        self.graph_zoom = 1.0
+        self.graph_pan_x = 0.0
+        self.graph_pan_y = 0.0
         self._notify()
 
     def toggle_dark_mode(self) -> bool:

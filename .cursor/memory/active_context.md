@@ -1,20 +1,20 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F5.2 Kanban view selesai
+**Last updated:** 2026-05-29 — F5.3 Dependency graph selesai
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 5 — **F5.3** Dependency graph (Tab 2)
-- **Selesai:** Kanban 4 kolom, task cards, drawer, blocker dialog, `select_task` di store
-- **Prompt:** `lanjut` atau *Lanjut F5.3 Dependency graph*
+- **Phase:** Fase 5 — **F5.4** Cost breakdown (Tab 3)
+- **Selesai:** Sugiyama layout, `flet.canvas` edges, filter status/agent, zoom/pan, klik node
+- **Prompt:** `lanjut` atau *Lanjut F5.4 Cost breakdown*
 
 ## File penting
 
 | Tujuan | Path |
 |--------|------|
-| Kanban view | `src/agent_builder/dashboard/views/kanban.py` |
-| Task resolution | `src/agent_builder/dashboard/state/kanban_tasks.py` |
-| Columns | `src/agent_builder/dashboard/state/kanban_columns.py` |
+| Graph view | `src/agent_builder/dashboard/views/dependency_graph.py` |
+| Layout | `src/agent_builder/dashboard/graph/sugiyama_layout.py` |
+| Canvas | `src/agent_builder/dashboard/components/dependency_graph_canvas.py` |
 
 ## Commands
 

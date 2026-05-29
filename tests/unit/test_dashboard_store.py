@@ -70,3 +70,19 @@ def test_select_task() -> None:
     store.select_task("T1.1")
     store.select_task(None)
     assert store.selected_task_id is None
+
+
+def test_graph_filters_and_zoom() -> None:
+    store = DashboardStore(Workspace(Path("unused4")))
+    store.set_graph_filters(status="running", agent="coder", show_completed=False)
+    assert store.graph_status_filter == "running"
+    assert store.graph_agent_filter == "coder"
+    assert store.graph_show_completed is False
+    store.set_graph_zoom(3.0)
+    assert store.graph_zoom == 2.5
+    store.adjust_graph_pan(10.0, -5.0)
+    assert store.graph_pan_x == 10.0
+    assert store.graph_pan_y == -5.0
+    store.reset_graph_view()
+    assert store.graph_zoom == 1.0
+    assert store.graph_pan_x == 0.0
