@@ -39,3 +39,6 @@ workspace/
 # OS
 Thumbs.db
 .DS_Store
+
+.tmp_expense_test/
+
