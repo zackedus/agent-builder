@@ -17,7 +17,7 @@ AGENT_COLORS: dict[str, dict[str, str]] = {
 
 DEFAULT_AGENT_COLOR = {"bg": "#F3F4F6", "fg": "#374151"}
 
-TAB_LABELS = ("Kanban", "Dependency", "Cost", "Replay")
+TAB_LABELS = ("Kontrol", "Kanban", "Dependency", "Cost", "Replay")
 
 
 @dataclass(frozen=True)

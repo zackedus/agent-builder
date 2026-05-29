@@ -18,6 +18,7 @@ from agent_builder.dashboard.theme import (
     tokens_for_mode,
 )
 from agent_builder.dashboard.views import (
+    build_control_view,
     build_cost_view,
     build_dependency_view,
     build_kanban_view,
@@ -51,6 +52,7 @@ def run_dashboard(workspace_dir: Path | None = None, *, poll_interval_s: float =
             return tokens_for_mode(dark=store.dark_mode)
 
         view_builders: list[Callable[[], Any]] = [
+            lambda: build_control_view(store, _tokens(), page),
             lambda: build_kanban_view(store, _tokens(), page),
             lambda: build_dependency_view(store, _tokens()),
             lambda: build_cost_view(store, _tokens()),
@@ -160,7 +162,7 @@ def run_dashboard(workspace_dir: Path | None = None, *, poll_interval_s: float =
             while True:
                 interval = max(0.05, 1.0 / store.replay_speed)
                 await asyncio.sleep(interval)
-                if not store.replay_playing or store.active_tab != 3:
+                if not store.replay_playing or store.active_tab != 4:
                     continue
                 if store.replayer.position >= len(store.events):
                     store.set_replay_playing(False)

@@ -13,6 +13,23 @@ from agent_builder.dashboard.state.store import DashboardStore
 from agent_builder.dashboard.theme import DashboardThemeTokens
 
 
+def _spawn_cli(cmd: list[str]) -> str:
+    kwargs: dict[str, Any] = {"cwd": str(Path.cwd())}
+    if sys.platform == "win32":
+        kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
+    try:
+        subprocess.Popen(cmd, **kwargs)  # noqa: S603
+    except OSError as exc:
+        return f"Gagal menjalankan: {exc}"
+    return "Perintah dibuka di terminal terpisah."
+
+
+def launch_cli_command(subcommand: str, *args: str) -> str:
+    """Spawn ``agent-builder <subcommand>`` in a new console."""
+    cmd = [sys.executable, "-m", "agent_builder.cli", subcommand, *args]
+    return _spawn_cli(cmd)
+
+
 def launch_build_in_terminal(prompt: str, *, budget: float | None = None) -> str:
     """Spawn ``agent-builder run`` in a new console (Windows) or background process."""
     prompt = prompt.strip()
@@ -22,16 +39,8 @@ def launch_build_in_terminal(prompt: str, *, budget: float | None = None) -> str
     cmd = [sys.executable, "-m", "agent_builder.cli", "run", prompt]
     if budget is not None and budget > 0:
         cmd.extend(["--budget", str(budget)])
-
-    kwargs: dict[str, Any] = {"cwd": str(Path.cwd())}
-    if sys.platform == "win32":
-        kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
-
-    try:
-        subprocess.Popen(cmd, **kwargs)  # noqa: S603
-    except OSError as exc:
-        return f"Gagal menjalankan build: {exc}"
-    return "Build dimulai di terminal terpisah. Dashboard akan update otomatis (poll)."
+    message = _spawn_cli(cmd)
+    return f"{message} Dashboard akan update otomatis (poll)."
 
 
 def build_settings_dialog(
@@ -92,11 +101,8 @@ def build_settings_dialog(
         f"sandbox: {settings.sandbox_layer}",
         f"Anthropic: {anthropic}",
         "",
-        "CLI (terminal terpisah):",
-        '  agent-builder run "deskripsi app"',
-        "  agent-builder status",
-        "  agent-builder resume",
-        "  agent-builder doctor",
+        "Tab Kontrol: run / resume / doctor dari UI.",
+        "Atau gunakan terminal jika perlu log penuh.",
         "",
         "Env: salin .env.example → .env",
     ]

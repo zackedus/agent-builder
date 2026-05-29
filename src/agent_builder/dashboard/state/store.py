@@ -33,6 +33,9 @@ class DashboardStore:
         self.graph_pan_y: float = 0.0
         self.replay_playing: bool = False
         self.replay_speed: float = 1.0
+        self.job_running: bool = False
+        self.job_message: str = ""
+        self.job_error: bool = False
         self._replayer: SessionReplayer | None = None
         self._listeners: list[Listener] = []
         self._event_bus: EventBus | None = None
@@ -136,6 +139,12 @@ class DashboardStore:
             self.replayer.set_position(0)
         self._notify()
 
+    def set_job_running(self, running: bool, message: str = "", *, error: bool = False) -> None:
+        self.job_running = running
+        self.job_message = message
+        self.job_error = error
+        self._notify()
+
     def set_replay_speed(self, speed: float) -> None:
         clamped = max(0.5, min(10.0, speed))
         if clamped == self.replay_speed:
@@ -154,6 +163,8 @@ class DashboardStore:
 
     def attach_event_bus(self, bus: EventBus) -> None:
         """Subscribe to live orchestrator events (in-process dashboard)."""
+        if self._event_bus is bus:
+            return
         self._event_bus = bus
 
         def _on_event(event: Event) -> None:

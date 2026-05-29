@@ -1,24 +1,25 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F5.5 Session replay selesai
+**Last updated:** 2026-05-29 — Tab Kontrol (full CLI dari dashboard)
 
 ## Lanjut dari sini
 
 - **Phase:** Fase 5 — **F5.6** Agent Chat
-- **Selesai:** replay scrubber, event sourcing, play/speed/jump, bookmark, rewind Kanban/Cost
-- **Prompt:** `lanjut` atau *Lanjut F5.6 Agent Chat*
+- **Dashboard:** Tab **Kontrol** = run, resume, doctor, env check
+- **Prompt:** `lanjut` untuk F5.6
 
-## File penting
+## Tab dashboard
 
-| Tujuan | Path |
-|--------|------|
-| Replay view | `src/agent_builder/dashboard/views/replay.py` |
-| State fold | `src/agent_builder/replay/state_reconstruction.py` |
-| Player | `src/agent_builder/replay/player.py` |
+| Tab | Fungsi |
+|-----|--------|
+| Kontrol | Build baru, resume, doctor, pengaturan |
+| Kanban | Task board |
+| Dependency | Graph |
+| Cost | Biaya |
+| Replay | Timeline |
 
 ## Commands
 
 ```powershell
 agent-builder dashboard
-pytest -m "not integration" -q
 ```
