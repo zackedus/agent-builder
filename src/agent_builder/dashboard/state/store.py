@@ -23,6 +23,7 @@ class DashboardStore:
         self.events: list[Event] = []
         self.dark_mode: bool = False
         self.active_tab: int = 0
+        self.selected_task_id: str | None = None
         self._listeners: list[Listener] = []
         self._event_bus: EventBus | None = None
 
@@ -33,6 +34,12 @@ class DashboardStore:
         if index == self.active_tab:
             return
         self.active_tab = index
+        self._notify()
+
+    def select_task(self, task_id: str | None) -> None:
+        if task_id == self.selected_task_id:
+            return
+        self.selected_task_id = task_id
         self._notify()
 
     def toggle_dark_mode(self) -> bool:

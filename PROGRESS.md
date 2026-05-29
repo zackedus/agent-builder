@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 5 — Dashboard (F5.1 ✅)
+**Current phase:** Fase 5 — Dashboard (F5.2 ✅)
 
 ---
 
@@ -28,12 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 5 — **F5.1 Dashboard foundation** ✅
-- **Sprint aktif:** F5.2 Kanban view
-- **Task berikutnya:** F5.2.1 four-column Kanban layout
+- **Phase:** Fase 5 — **F5.2 Kanban view** ✅
+- **Sprint aktif:** F5.3 Dependency graph
+- **Task berikutnya:** F5.3.1 custom Flet canvas component
 - **Blocker aktif:** —
-- **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
-- **Tests:** `pytest -m "not integration"` → **189 passed**
+- **Last commit:** (F5.2 — sesi ini)
+- **Tests:** `pytest -m "not integration"` → **194 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -330,12 +330,12 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F5.1.5** Live activity feed (`dashboard/components/activity_feed.py`)
 
 #### Milestone 5.2 — Kanban View (Tab 1) [ ]
-- [ ] **F5.2.1** 4-column layout
-- [ ] **F5.2.2** Task card component
-- [ ] **F5.2.3** Agent tag dengan color mapping
-- [ ] **F5.2.4** Sub-status indicator (spinner + text)
-- [ ] **F5.2.5** Task detail drawer (slide-in dari kanan)
-- [ ] **F5.2.6** Blocker resolution dialog
+- [x] **F5.2.1** 4-column layout
+- [x] **F5.2.2** Task card component
+- [x] **F5.2.3** Agent tag dengan color mapping
+- [x] **F5.2.4** Sub-status indicator (spinner + text)
+- [x] **F5.2.5** Task detail drawer (slide-in dari kanan)
+- [x] **F5.2.6** Blocker resolution dialog
 
 #### Milestone 5.3 — Dependency Graph (Tab 2) [ ]
 - [ ] **F5.3.1** Custom Flet canvas component
@@ -408,7 +408,18 @@ Total milestones per fase:
 - Flet shell: 4 tabs, metrics row, activity feed, dark mode
 - `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
 
-**Next:** F5.2 Kanban columns + task cards
+**Next:** F5.3 Dependency graph
+
+---
+
+### 2026-05-29 — F5.2 Kanban view
+**Selesai:**
+- `kanban_tasks.py`, `kanban_columns.py` — status dari plan + session
+- Komponen: `task_card`, `agent_tag`, `task_status_indicator`, `task_detail_drawer`, `blocker_dialog`
+- `views/kanban.py` — 4 kolom, drawer, dialog; `DashboardStore.select_task`
+- Unit tests: `test_kanban_tasks`, `test_kanban_columns`
+
+**Next:** F5.3 Dependency graph (Tab 2)
 
 ---
 

@@ -1,20 +1,20 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F5.1 Dashboard foundation selesai
+**Last updated:** 2026-05-29 — F5.2 Kanban view selesai
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 5 — **F5.2** Kanban view (4 kolom + task card)
-- **Selesai:** `agent-builder dashboard`, 4 tab shell, theme, store, activity feed
-- **Prompt:** `lanjut` atau *Lanjut F5.2 Kanban*
+- **Phase:** Fase 5 — **F5.3** Dependency graph (Tab 2)
+- **Selesai:** Kanban 4 kolom, task cards, drawer, blocker dialog, `select_task` di store
+- **Prompt:** `lanjut` atau *Lanjut F5.3 Dependency graph*
 
 ## File penting
 
 | Tujuan | Path |
 |--------|------|
-| Dashboard entry | `src/agent_builder/dashboard/app.py` |
-| State store | `src/agent_builder/dashboard/state/store.py` |
-| Theme | `src/agent_builder/dashboard/theme.py` |
+| Kanban view | `src/agent_builder/dashboard/views/kanban.py` |
+| Task resolution | `src/agent_builder/dashboard/state/kanban_tasks.py` |
+| Columns | `src/agent_builder/dashboard/state/kanban_columns.py` |
 
 ## Commands
 

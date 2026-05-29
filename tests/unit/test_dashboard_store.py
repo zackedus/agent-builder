@@ -60,3 +60,13 @@ def test_toggle_dark_mode() -> None:
     assert store.dark_mode is False
     assert store.toggle_dark_mode() is True
     assert store.dark_mode is True
+
+
+def test_select_task() -> None:
+    store = DashboardStore(Workspace(Path("unused3")))
+    assert store.selected_task_id is None
+    store.select_task("T1.1")
+    assert store.selected_task_id == "T1.1"
+    store.select_task("T1.1")
+    store.select_task(None)
+    assert store.selected_task_id is None

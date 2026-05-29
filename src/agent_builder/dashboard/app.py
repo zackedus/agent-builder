@@ -50,7 +50,7 @@ def run_dashboard(workspace_dir: Path | None = None, *, poll_interval_s: float =
             return tokens_for_mode(dark=store.dark_mode)
 
         view_builders: list[Callable[[], Any]] = [
-            lambda: build_kanban_view(store, _tokens()),
+            lambda: build_kanban_view(store, _tokens(), page),
             lambda: build_dependency_view(store, _tokens()),
             lambda: build_cost_view(store, _tokens()),
             lambda: build_replay_view(store, _tokens()),
