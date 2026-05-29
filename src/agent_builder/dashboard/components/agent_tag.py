@@ -14,6 +14,6 @@ def build_agent_tag(agent: str) -> Any:
     return ft.Container(
         content=ft.Text(agent, size=11, color=colors["fg"], weight=ft.FontWeight.W_500),
         bgcolor=colors["bg"],
-        padding=ft.padding.symmetric(horizontal=8, vertical=2),
+        padding=ft.Padding.symmetric(horizontal=8, vertical=2),
         border_radius=12,
     )

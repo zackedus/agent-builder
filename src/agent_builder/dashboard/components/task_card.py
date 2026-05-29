@@ -41,7 +41,7 @@ def build_task_card(
         border=border_left or border_all(1, tokens.border),
         border_radius=8,
         padding=10,
-        margin=ft.margin.only(bottom=8),
+        margin=ft.Margin.only(bottom=8),
         bgcolor=tokens.surface_variant if selected else tokens.surface,
         content=ft.Column(
             [

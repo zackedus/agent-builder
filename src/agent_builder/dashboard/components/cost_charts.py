@@ -274,7 +274,7 @@ def _metric_chip(label: str, value: str, tokens: DashboardThemeTokens) -> Any:
     import flet as ft
 
     return ft.Container(
-        padding=ft.padding.symmetric(horizontal=12, vertical=8),
+        padding=ft.Padding.symmetric(horizontal=12, vertical=8),
         bgcolor=tokens.surface_variant,
         border_radius=8,
         content=ft.Column(

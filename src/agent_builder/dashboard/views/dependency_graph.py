@@ -42,14 +42,14 @@ def build_dependency_view(store: DashboardStore, tokens: DashboardThemeTokens) -
         width=180,
         value=store.graph_status_filter,
         options=status_options,
-        on_change=lambda e: store.set_graph_filters(status=str(e.control.value)),
+        on_select=lambda e: store.set_graph_filters(status=str(e.control.value)),
     )
     agent_dropdown = ft.Dropdown(
         label="Agent",
         width=160,
         value=store.graph_agent_filter,
         options=agent_options,
-        on_change=lambda e: store.set_graph_filters(agent=str(e.control.value)),
+        on_select=lambda e: store.set_graph_filters(agent=str(e.control.value)),
     )
     show_completed = ft.Switch(
         label="Tampilkan selesai",

@@ -98,7 +98,7 @@ def build_kanban_view(
                                     content=ft.Text(str(len(column_tasks)), size=11),
                                     bgcolor=tokens.border,
                                     border_radius=10,
-                                    padding=ft.padding.symmetric(horizontal=8, vertical=2),
+                                    padding=ft.Padding.symmetric(horizontal=8, vertical=2),
                                 ),
                             ],
                             alignment=ft.MainAxisAlignment.SPACE_BETWEEN,
@@ -130,7 +130,7 @@ def build_kanban_view(
     if drawer is not None:
         return ft.Stack(
             [
-                ft.Container(content=board, expand=True, padding=ft.padding.only(right=8)),
+                ft.Container(content=board, expand=True, padding=ft.Padding.only(right=8)),
                 ft.Container(
                     content=drawer,
                     right=0,

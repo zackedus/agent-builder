@@ -75,7 +75,7 @@ def build_replay_view(store: DashboardStore, tokens: DashboardThemeTokens) -> An
         width=100,
         value=str(store.replay_speed),
         options=[ft.dropdown.Option(str(s), f"{s}x") for s in REPLAY_SPEEDS],
-        on_change=lambda e: store.set_replay_speed(float(str(e.control.value))),
+        on_select=lambda e: store.set_replay_speed(float(str(e.control.value))),
     )
 
     jump_type = ft.Dropdown(
@@ -111,7 +111,7 @@ def build_replay_view(store: DashboardStore, tokens: DashboardThemeTokens) -> An
         if raw:
             store.set_replay_position(int(str(raw)))
 
-    bookmark_dropdown.on_change = on_bookmark_jump
+    bookmark_dropdown.on_select = on_bookmark_jump
 
     state_label = str(frame.state.current_state)
     task_label = frame.state.current_task or "—"
