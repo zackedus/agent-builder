@@ -329,7 +329,7 @@ class Orchestrator:
             raise StateTransitionError("No current plan task")
 
         feedback = self._collect_retry_feedback(plan_task.id)
-        coder = CoderAgent(self.router(), self.workspace)
+        coder = CoderAgent(self.router(), self.workspace, settings=self.settings)
         context = AgentContext(
             session_id=self.session.session_id,
             user_prompt=self.session.user_prompt,

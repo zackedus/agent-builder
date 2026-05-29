@@ -1,23 +1,24 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F4.5 Enhanced Coder selesai
+**Last updated:** 2026-05-29 — F4.6 E2E selesai, Fase 4 complete
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 4 — **F4.6** E2E validation (expense tracker → .exe)
-- **Selesai:** Coder + Indexer context, SEARCH/REPLACE patches, Flet reference
-- **Prompt:** `lanjut` atau *Lanjut F4.6 E2E*
+- **Phase:** Fase 5 — Dashboard (`dashboard/` Flet app)
+- **Selesai:** Fase 4 full pipeline E2E (expense tracker mocked)
+- **Prompt:** `lanjut` atau *Lanjut Fase 5 dashboard*
 
 ## File penting
 
 | Tujuan | Path |
 |--------|------|
-| Coder context | `src/agent_builder/agents/coder_context.py` |
-| Patches | `src/agent_builder/agents/code_patches.py` |
-| Env | `AGENT_BUILDER_CODER_USE_INDEX=true` |
+| E2E expense | `tests/e2e/test_expense_build.py` |
+| Release checks | `src/agent_builder/validation/build_output.py` |
+| Example prompt | `examples/expense_tracker_prompt.txt` |
 
 ## Commands
 
 ```powershell
 pytest -m "not integration" -q
+pytest tests/e2e/test_expense_build.py -v
 ```

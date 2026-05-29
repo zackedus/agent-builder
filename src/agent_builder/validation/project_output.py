@@ -290,6 +290,88 @@ async def validate_todo_crud(
     return outcome
 
 
+@dataclass
+class ExpenseValidation:
+    """Outcome of headless expense tracker CLI checks."""
+
+    steps_ok: bool = True
+    errors: list[str] = field(default_factory=list)
+
+
+async def validate_expense_features(
+    project_dir: Path,
+    *,
+    month: str | None = None,
+    sandbox: SubprocessSandbox | None = None,
+) -> ExpenseValidation:
+    """Run add/list/summary/chart checks via ``main.py --cli``."""
+    from datetime import date
+
+    from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox as _Sandbox
+
+    entry = project_dir / "main.py"
+    outcome = ExpenseValidation()
+    if not entry.is_file():
+        outcome.steps_ok = False
+        outcome.errors.append("main.py not found")
+        return outcome
+
+    if not (project_dir / "expense_store.py").is_file():
+        outcome.steps_ok = False
+        outcome.errors.append("expense_store.py not found")
+        return outcome
+
+    if not (project_dir / "chart_data.py").is_file():
+        outcome.steps_ok = False
+        outcome.errors.append("chart_data.py not found")
+        return outcome
+
+    db_path = project_dir / "expenses.db"
+    if db_path.is_file():
+        db_path.unlink()
+
+    resolved_month = month or date.today().strftime("%Y-%m")
+    sb = sandbox or _Sandbox(project_dir)
+
+    async def run_step(
+        args: list[str],
+        *,
+        expect_in_stdout: str | None = None,
+    ) -> str:
+        code, stdout, stderr, blocked, reason = await run_entry_script(sb, entry, ["--cli", *args])
+        if blocked:
+            outcome.steps_ok = False
+            outcome.errors.append(f"blocked {args}: {reason}")
+            return stdout
+        if code != 0:
+            outcome.steps_ok = False
+            outcome.errors.append(f"exit {code} for {args}: {stderr or stdout}")
+            return stdout
+        if expect_in_stdout and expect_in_stdout not in stdout:
+            outcome.steps_ok = False
+            outcome.errors.append(
+                f"expected {expect_in_stdout!r} in stdout for {args}, got {stdout!r}"
+            )
+        return stdout
+
+    await run_step(["add", "100000", "Makan"], expect_in_stdout="added:")
+    await run_step(["add", "50000", "Transport"], expect_in_stdout="added:")
+    await run_step(["list"], expect_in_stdout="Makan")
+    await run_step(
+        ["summary", "--month", resolved_month],
+        expect_in_stdout="CHART:Makan:100000.00",
+    )
+    await run_step(
+        ["summary", "--month", resolved_month],
+        expect_in_stdout="CHART:Transport:50000.00",
+    )
+    await run_step(
+        ["summary", "--month", resolved_month],
+        expect_in_stdout="TOTAL:150000.00",
+    )
+    return outcome
+
+
 def assert_calculator_output(stdout: str, expected: float, *, tolerance: float = 1e-6) -> None:
     """Assert *stdout* contains a numeric result close to *expected*."""
     tokens = stdout.replace(",", " ").split()

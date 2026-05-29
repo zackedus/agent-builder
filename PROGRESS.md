@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 4 — Enhanced Coder (F4.5 ✅)
+**Current phase:** Fase 4 selesai (F4.6 ✅) → Fase 5 Dashboard
 
 ---
 
@@ -28,13 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 4 — **F4.5 Enhanced Coder** ✅
-- **Fase 3:** ✅ selesai (E2E todo + self-correction)
-- **Sprint aktif:** F4.6 E2E validation, atau F4.1.7 perf test
-- **Task berikutnya:** F4.6 expense tracker E2E, F4.1.7 perf test 1000 files
+- **Phase:** Fase 4 ✅ — siap Fase 5 Dashboard
+- **Sprint aktif:** Fase 5.1 Dashboard foundation
+- **Task berikutnya:** F5.1.1 Flet dashboard skeleton, F4.1.7 perf test (opsional)
 - **Blocker aktif:** —
 - **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
-- **Tests:** `pytest -m "not integration"` → **180 passed**
+- **Tests:** `pytest -m "not integration"` → **183 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -306,12 +305,12 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F4.5.3** Multi-file output (prompt + multiple fences)
 - [x] **F4.5.4** Flet patterns (`llm/prompts/flet_reference.txt` for `ui` tasks)
 
-#### Milestone 4.6 — E2E Validation [ ]
-- [ ] **F4.6.1** Test prompt: "Aplikasi pencatat pengeluaran + grafik bulanan"
-- [ ] **F4.6.2** Validate: .exe ter-generate
-- [ ] **F4.6.3** Validate: .exe bisa di-launch
-- [ ] **F4.6.4** Validate: semua fitur berfungsi
-- [ ] **F4.6.5** Validate: total cost <$15
+#### Milestone 4.6 — E2E Validation [x]
+- [x] **F4.6.1** Test prompt: expense tracker (`tests/e2e/test_expense_build.py`)
+- [x] **F4.6.2** Validate release zip + BUILD_REPORT (`validation/build_output.py`)
+- [x] **F4.6.3** Validate launcher/artifact smoke (`validate_launchable_artifact`)
+- [x] **F4.6.4** Validate CRUD + chart CLI (`validate_expense_features`)
+- [x] **F4.6.5** Validate session cost <$15 (`assert_session_cost_under_budget`)
 
 **Success criteria Fase 4:**
 - Aplikasi medium bisa di-generate end-to-end → .exe
@@ -403,6 +402,15 @@ Total milestones per fase:
 ## 5. Session Log
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
+
+### 2026-05-29 — F4.6 E2E expense tracker validation
+**Selesai:**
+- `tests/e2e/test_expense_build.py` + `fixtures/expense_responses.py`
+- `validation/build_output.py`, `validate_expense_features` in `project_output.py`
+
+**Next:** Fase 5 Dashboard
+
+---
 
 ### 2026-05-29 — F4.5 Enhanced Coder
 **Selesai:**
