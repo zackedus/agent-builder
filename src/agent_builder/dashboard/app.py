@@ -133,7 +133,19 @@ def run_dashboard(workspace_dir: Path | None = None, *, poll_interval_s: float =
                 await asyncio.sleep(poll_interval_s)
                 store.refresh()
 
+        async def replay_autoplay() -> None:
+            while True:
+                interval = max(0.05, 1.0 / store.replay_speed)
+                await asyncio.sleep(interval)
+                if not store.replay_playing or store.active_tab != 3:
+                    continue
+                if store.replayer.position >= len(store.events):
+                    store.set_replay_playing(False)
+                else:
+                    store.set_replay_position(store.replayer.position + 1)
+
         page.run_task(poll_workspace)
+        page.run_task(replay_autoplay)
 
     launch_app(main)
 

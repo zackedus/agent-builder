@@ -37,7 +37,7 @@ def build_kanban_view(
 ) -> Any:
     import flet as ft
 
-    tasks = resolve_kanban_tasks(store.session, store.plan)
+    tasks = resolve_kanban_tasks(store.session_for_views(), store.plan)
     grouped = group_tasks_by_column(tasks)
     selected_id = store.selected_task_id
     selected_task = next((t for t in tasks if t.id == selected_id), None)

@@ -9,6 +9,7 @@ from agent_builder.core.event_bus import Event, EventBus, EventType
 from agent_builder.core.state import OrchestratorState, Plan, SessionState
 from agent_builder.core.workspace import Workspace
 from agent_builder.dashboard.state.selectors import DashboardMetrics, compute_metrics
+from agent_builder.replay.player import SessionReplayer
 
 Listener = Callable[[], None]
 
@@ -30,6 +31,9 @@ class DashboardStore:
         self.graph_zoom: float = 1.0
         self.graph_pan_x: float = 0.0
         self.graph_pan_y: float = 0.0
+        self.replay_playing: bool = False
+        self.replay_speed: float = 1.0
+        self._replayer: SessionReplayer | None = None
         self._listeners: list[Listener] = []
         self._event_bus: EventBus | None = None
 
@@ -96,13 +100,56 @@ class DashboardStore:
         return self.dark_mode
 
     def metrics(self) -> DashboardMetrics:
-        return compute_metrics(self.session, self.plan, self.events)
+        session = self.session_for_views()
+        event_slice = self.events_for_views()
+        return compute_metrics(session, self.plan, event_slice)
+
+    @property
+    def replayer(self) -> SessionReplayer:
+        if self._replayer is None:
+            self._replayer = SessionReplayer(self.events, self.session)
+        return self._replayer
+
+    def session_for_views(self) -> SessionState | None:
+        """Live session or reconstructed snapshot when replaying."""
+        if not self.events or self.replayer.at_live_tail:
+            return self.session
+        return self.replayer.frame().state
+
+    def events_for_views(self) -> list[Event]:
+        """Events visible at current replay position (for cost aggregation)."""
+        if not self.events or self.replayer.at_live_tail:
+            return self.events
+        return self.events[: self.replayer.position]
+
+    def set_replay_position(self, position: int) -> None:
+        self.replayer.set_position(position)
+        if self.replayer.at_live_tail:
+            self.replay_playing = False
+        self._notify()
+
+    def set_replay_playing(self, playing: bool) -> None:
+        if playing == self.replay_playing:
+            return
+        self.replay_playing = playing
+        if playing and self.replayer.at_live_tail and self.events:
+            self.replayer.set_position(0)
+        self._notify()
+
+    def set_replay_speed(self, speed: float) -> None:
+        clamped = max(0.5, min(10.0, speed))
+        if clamped == self.replay_speed:
+            return
+        self.replay_speed = clamped
+        self._notify()
 
     def refresh(self) -> None:
         """Reload session, plan, and events from disk."""
         self.session = self.workspace.load_session()
         self.plan = self.workspace.load_plan()
         self.events = self.workspace.events_store().load_all()
+        self._replayer = SessionReplayer(self.events, self.session)
+        self.replay_playing = False
         self._notify()
 
     def attach_event_bus(self, bus: EventBus) -> None:

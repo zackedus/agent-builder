@@ -23,8 +23,8 @@ def build_cost_view(store: DashboardStore, tokens: DashboardThemeTokens) -> Any:
 
     budget_cap = get_settings().budget_usd
     summary = aggregate_cost_data(
-        store.events,
-        store.session,
+        store.events_for_views(),
+        store.session_for_views(),
         store.plan,
         budget_cap=budget_cap,
     )

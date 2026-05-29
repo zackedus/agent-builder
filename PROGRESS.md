@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 5 — Dashboard (F5.4 ✅)
+**Current phase:** Fase 5 — Dashboard (F5.5 ✅)
 
 ---
 
@@ -28,12 +28,12 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 5 — **F5.4 Cost breakdown** ✅
-- **Sprint aktif:** F5.5 Replay
-- **Task berikutnya:** F5.5.1 event reader (events.jsonl)
+- **Phase:** Fase 5 — **F5.5 Replay** ✅
+- **Sprint aktif:** F5.6 Agent Chat (atau F5.7 polish)
+- **Task berikutnya:** F5.6.1 chat drawer UI
 - **Blocker aktif:** —
-- **Last commit:** (F5.4 — sesi ini)
-- **Tests:** `pytest -m "not integration"` → **208 passed**
+- **Last commit:** (F5.5 — sesi ini)
+- **Tests:** `pytest -m "not integration"` → **213 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -354,13 +354,13 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F5.4.7** Auto-pause on budget exceeded
 
 #### Milestone 5.5 — Replay (Tab 4) [ ]
-- [ ] **F5.5.1** Event reader (events.jsonl)
-- [ ] **F5.5.2** State reconstruction logic (event sourcing)
-- [ ] **F5.5.3** Timeline scrubber
-- [ ] **F5.5.4** Play/pause/step controls
-- [ ] **F5.5.5** Speed selector (0.5x - 10x)
-- [ ] **F5.5.6** Jump to event type (failure, milestone, etc.)
-- [ ] **F5.5.7** Auto-bookmark interesting moments
+- [x] **F5.5.1** Event reader (events.jsonl)
+- [x] **F5.5.2** State reconstruction logic (event sourcing)
+- [x] **F5.5.3** Timeline scrubber
+- [x] **F5.5.4** Play/pause/step controls
+- [x] **F5.5.5** Speed selector (0.5x - 10x)
+- [x] **F5.5.6** Jump to event type (failure, milestone, etc.)
+- [x] **F5.5.7** Auto-bookmark interesting moments
 
 #### Milestone 5.6 — Agent Chat [ ]
 - [ ] **F5.6.1** Chat drawer UI
@@ -408,7 +408,17 @@ Total milestones per fase:
 - Flet shell: 4 tabs, metrics row, activity feed, dark mode
 - `agent-builder dashboard` CLI + `DashboardStore` polling `events.jsonl`
 
-**Next:** F5.5 Replay
+**Next:** F5.6 Agent Chat
+
+---
+
+### 2026-05-29 — F5.5 Session replay
+**Selesai:**
+- `replay/` — event reader, state reconstruction, bookmarks, `SessionReplayer`
+- Tab Replay: scrubber, play/pause/step, speed, jump, bookmarks
+- Kanban/Cost/Dependency ikut `session_for_views()` saat scrub
+
+**Next:** F5.6 Agent Chat
 
 ---
 

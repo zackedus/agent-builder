@@ -19,7 +19,7 @@ from agent_builder.dashboard.theme import DashboardThemeTokens
 def build_dependency_view(store: DashboardStore, tokens: DashboardThemeTokens) -> Any:
     import flet as ft
 
-    all_tasks = resolve_kanban_tasks(store.session, store.plan)
+    all_tasks = resolve_kanban_tasks(store.session_for_views(), store.plan)
     filtered = filter_graph_tasks(
         all_tasks,
         status_filter=store.graph_status_filter,
