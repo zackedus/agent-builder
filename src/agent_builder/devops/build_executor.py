@@ -3,12 +3,12 @@
 from __future__ import annotations
 
 import importlib.util
-import shutil
 import sys
 from dataclasses import dataclass
 from pathlib import Path
 
-from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox
+from agent_builder.sandbox.base import Sandbox
+from agent_builder.sandbox.docker_sandbox import DockerSandbox
 
 
 @dataclass(frozen=True)
@@ -25,15 +25,12 @@ class BuildAttempt:
 async def run_pyinstaller_build(
     project_dir: Path,
     spec_path: Path,
-    sandbox: SubprocessSandbox,
+    sandbox: Sandbox,
     *,
     timeout: float = 300.0,
 ) -> BuildAttempt:
     """Run ``pyinstaller`` on *spec_path* if the tool is available."""
-    if shutil.which(sys.executable) is None:
-        return BuildAttempt(success=False, skipped=True, reason="python not found")
-
-    if importlib.util.find_spec("PyInstaller") is None:
+    if not isinstance(sandbox, DockerSandbox) and importlib.util.find_spec("PyInstaller") is None:
         return BuildAttempt(
             success=False,
             skipped=True,
@@ -41,7 +38,7 @@ async def run_pyinstaller_build(
         )
 
     result = await sandbox.run_command(
-        [sys.executable, "-m", "PyInstaller", "--noconfirm", spec_path.name],
+        [sandbox.python_bin, "-m", "PyInstaller", "--noconfirm", spec_path.name],
         cwd=project_dir,
         timeout=timeout,
     )
@@ -78,7 +75,7 @@ def _find_built_exe(project_dir: Path, spec_path: Path) -> Path | None:
 
 async def smoke_test_executable(
     artifact: Path,
-    sandbox: SubprocessSandbox,
+    sandbox: Sandbox,
     *,
     timeout: float = 15.0,
 ) -> tuple[bool, str]:

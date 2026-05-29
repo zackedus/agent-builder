@@ -12,7 +12,7 @@ from agent_builder.devops.models import BuildReport
 from agent_builder.devops.packager import create_release_package, platform_tag, write_build_report
 from agent_builder.devops.spec_builder import generate_pyinstaller_spec
 from agent_builder.llm.router import LLMRouter
-from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox
+from agent_builder.sandbox.factory import create_project_sandbox
 from agent_builder.validation.project_output import find_entry_script, find_python_files
 
 
@@ -67,7 +67,11 @@ class DevOpsAgent(BaseAgent):
         )
         report.spec_path = spec_path.name
 
-        sandbox = SubprocessSandbox(project_dir, timeout=300.0)
+        sandbox = create_project_sandbox(
+            project_dir,
+            settings=self.settings,
+            timeout=300.0,
+        )
         build = await run_pyinstaller_build(project_dir, spec_path, sandbox)
 
         if build.artifact is not None:

@@ -1,12 +1,14 @@
 """Sandboxed code execution."""
 
 from agent_builder.sandbox.base import Sandbox, SandboxResult
+from agent_builder.sandbox.docker_sandbox import DockerSandbox
 from agent_builder.sandbox.exceptions import (
     SandboxError,
     SandboxExecutionError,
     SandboxPathError,
     SandboxSecurityError,
 )
+from agent_builder.sandbox.factory import create_project_sandbox
 from agent_builder.sandbox.static_check import StaticCheckResult, StaticSecurityChecker
 from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox
 
@@ -19,5 +21,7 @@ __all__ = [
     "SandboxSecurityError",
     "StaticCheckResult",
     "StaticSecurityChecker",
+    "DockerSandbox",
     "SubprocessSandbox",
+    "create_project_sandbox",
 ]

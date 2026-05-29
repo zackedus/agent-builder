@@ -4,7 +4,7 @@
 **Repository:** `agent-team-builder/`
 **Architecture spec:** `ARCHITECTURE.md` v1.1
 **Last updated:** 2026-05-29
-**Current phase:** Fase 4 — DevOps (F4.3 ✅)
+**Current phase:** Fase 4 — Docker sandbox (F4.4 ✅)
 
 ---
 
@@ -28,13 +28,13 @@
 > **Section ini di-update setiap akhir sesi.** Tujuannya: kalau buka project lagi setelah seminggu, baca section ini saja sudah cukup paham mau ngerjain apa.
 
 ### Status sekarang
-- **Phase:** Fase 4 — **F4.3 DevOps** ✅
+- **Phase:** Fase 4 — **F4.4 Docker sandbox** ✅
 - **Fase 3:** ✅ selesai (E2E todo + self-correction)
-- **Sprint aktif:** F4.4 Docker sandbox Layer 2, atau F4.5 Enhanced Coder
-- **Task berikutnya:** F4.4.1 `docker_sandbox.py`, F4.1.7 perf test, atau F4.5 Indexer→Coder
+- **Sprint aktif:** F4.5 Enhanced Coder, atau F4.6 E2E validation
+- **Task berikutnya:** F4.5.1 Coder + Indexer, F4.1.7 perf test, F4.6 expense tracker E2E
 - **Blocker aktif:** —
 - **Last commit:** `984a53e` (+ F4.3 belum di-commit sesi ini)
-- **Tests:** `pytest -m "not integration"` → **166 passed**
+- **Tests:** `pytest -m "not integration"` → **171 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -291,14 +291,14 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F4.3.5** Smoke test executable
 - [x] **F4.3.6** Package + checksum + README (`devops/packager.py`, `orchestrator.execute_deploying`)
 
-#### Milestone 4.4 — Sandbox Layer 2 [ ]
-- [ ] **F4.4.1** Implement `sandbox/docker_sandbox.py`
-- [ ] **F4.4.2** Dockerfile base image
-- [ ] **F4.4.3** Volume mounting strategy
-- [ ] **F4.4.4** Network isolation
-- [ ] **F4.4.5** Resource limits
-- [ ] **F4.4.6** Auto-cleanup
-- [ ] **F4.4.7** Fallback ke Layer 1 jika Docker tidak available
+#### Milestone 4.4 — Sandbox Layer 2 [x]
+- [x] **F4.4.1** Implement `sandbox/docker_sandbox.py`
+- [x] **F4.4.2** Dockerfile base image (`sandbox/images/Dockerfile`)
+- [x] **F4.4.3** Volume mounting strategy (`docker_util.host_mount_path`)
+- [x] **F4.4.4** Network isolation (`--network=none`)
+- [x] **F4.4.5** Resource limits (`--cpus`, `--memory`)
+- [x] **F4.4.6** Auto-cleanup (`docker run --rm`)
+- [x] **F4.4.7** Fallback ke Layer 1 (`sandbox/factory.py`, `AGENT_BUILDER_SANDBOX_LAYER`)
 
 #### Milestone 4.5 — Enhanced Coder [ ]
 - [ ] **F4.5.1** Upgrade Coder pakai Indexer untuk konteks
@@ -403,6 +403,16 @@ Total milestones per fase:
 ## 5. Session Log
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
+
+### 2026-05-29 — F4.4 Docker sandbox Layer 2
+**Selesai:**
+- `docker_sandbox.py`, `docker_util.py`, `sandbox/images/Dockerfile`
+- `create_project_sandbox()` + `AGENT_BUILDER_SANDBOX_LAYER=auto|docker|subprocess`
+- DevOps memakai Docker saat tersedia; fallback subprocess
+
+**Next:** F4.5 Enhanced Coder
+
+---
 
 ### 2026-05-29 — F4.3 DevOps Agent
 **Selesai:**

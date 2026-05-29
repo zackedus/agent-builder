@@ -30,6 +30,13 @@ class Sandbox(ABC):
     def __init__(self, workspace_root: Path) -> None:
         self.workspace_root = workspace_root.resolve()
 
+    @property
+    def python_bin(self) -> str:
+        """Python executable used inside ``run_command`` for module invocations."""
+        import sys
+
+        return sys.executable
+
     def ensure_cwd(self, cwd: Path | None) -> Path:
         """Resolve *cwd* and verify it stays inside ``workspace_root``."""
         target = (cwd or self.workspace_root).resolve()

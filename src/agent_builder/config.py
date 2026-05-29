@@ -1,6 +1,7 @@
 """Application settings loaded from environment / .env file."""
 
 from pathlib import Path
+from typing import Literal
 
 from pydantic import Field
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -41,6 +42,10 @@ class Settings(BaseSettings):
     run_integration_tests: bool = Field(
         default=False,
         validation_alias="AGENT_BUILDER_RUN_INTEGRATION_TESTS",
+    )
+    sandbox_layer: Literal["subprocess", "docker", "auto"] = Field(
+        default="auto",
+        validation_alias="AGENT_BUILDER_SANDBOX_LAYER",
     )
 
     def anthropic_configured(self) -> bool:
