@@ -7,6 +7,7 @@ from typing import TYPE_CHECKING, Any
 
 from agent_builder.agents.base import AgentContext
 from agent_builder.agents.coder import CoderAgent
+from agent_builder.agents.designer import DesignerAgent
 from agent_builder.agents.indexer import IndexerAgent
 from agent_builder.agents.planner import PlannerAgent
 from agent_builder.agents.review_models import ReviewResult
@@ -251,6 +252,56 @@ class Orchestrator:
         self.complete_indexing(requires_design=requires_design)
         return True
 
+    async def execute_designing(self) -> bool:
+        """Run Designer for UI tasks and transition to CODING."""
+        if self.session is None:
+            raise StateNotFoundError("No active session")
+        if self.session.current_state != OrchestratorState.DESIGNING:
+            raise StateTransitionError(
+                f"execute_designing requires DESIGNING, got {self.session.current_state}"
+            )
+
+        plan = self.workspace.load_plan()
+        if plan is None:
+            raise StateTransitionError("No plan.json in workspace")
+        plan_task = self._current_plan_task(plan)
+        if plan_task is None:
+            raise StateTransitionError("No current plan task")
+
+        designer = DesignerAgent(self.router(), self.workspace, settings=self.settings)
+        context = AgentContext(
+            session_id=self.session.session_id,
+            user_prompt=self.session.user_prompt,
+            task_id=plan_task.id,
+            task_title=plan_task.title,
+            task_type=plan_task.type,
+            extra={"plan": plan, "plan_task": plan_task},
+        )
+        result = await designer.run(context)
+
+        if result.success:
+            self.dispatch(
+                OrchestratorEvent.DESIGN_READY,
+                TransitionContext(
+                    task_id=plan_task.id,
+                    payload={"design_path": result.data.get("design_path")},
+                ),
+            )
+            return True
+
+        self.event_bus.publish_sync(
+            Event(
+                type=EventType.TASK_FAILED,
+                session_id=self.session.session_id,
+                payload={
+                    "task_id": plan_task.id,
+                    "error": result.output or result.errors,
+                    "agent": "designer",
+                },
+            )
+        )
+        return False
+
     def complete_indexing(self, *, requires_design: bool = False) -> SessionState:
         """Transition from INDEXING to DESIGNING or CODING."""
         return self.dispatch(
@@ -470,7 +521,9 @@ class Orchestrator:
                 continue
 
             if state == OrchestratorState.DESIGNING:
-                self.dispatch(OrchestratorEvent.DESIGN_READY)
+                ok = await self.execute_designing()
+                if not ok:
+                    break
                 continue
 
             if state == OrchestratorState.CODING:

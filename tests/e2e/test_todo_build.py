@@ -8,6 +8,7 @@ from unittest.mock import AsyncMock, patch
 import pytest
 
 from agent_builder.agents.base import AgentContext, AgentResult
+from agent_builder.agents.design_parser import parse_design
 from agent_builder.agents.review_models import ReviewResult
 from agent_builder.agents.test_models import TesterReport
 from agent_builder.config import Settings
@@ -28,6 +29,7 @@ from tests.e2e.fixtures.todo_responses import (
     TODO_PLAN_JSON,
     TODO_USER_PROMPT,
 )
+from tests.unit.fixtures.design_responses import LIST_DESIGN_JSON
 
 
 @pytest.fixture
@@ -159,9 +161,17 @@ async def test_todo_build_e2e_self_correction(
             ),
         },
     )
+    design_ok = AgentResult(
+        success=True,
+        data={
+            "design": parse_design(LIST_DESIGN_JSON),
+            "design_path": ".agent/designs/T1.1.json",
+        },
+    )
 
     with (
         patch.object(orch, "router", return_value=mock_todo_llm_router),
+        patch("agent_builder.agents.designer.DesignerAgent.run", AsyncMock(return_value=design_ok)),
         patch(
             "agent_builder.agents.tester.TesterAgent.run",
             _make_tester_side_effect(todo_workspace),

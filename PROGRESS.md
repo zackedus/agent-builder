@@ -31,10 +31,10 @@
 - **Phase:** Fase 3 — Milestone **3.4** ✅ (E2E todo + self-correction mocked)
 - **Fase 2:** ✅ selesai (Planner → Coder → E2E calculator mocked)
 - **Sprint aktif:** Fase 3 selesai core; lanjut F3.1.3 atau Fase 4
-- **Task berikutnya:** F4.2 Designer, atau F4.1.7 perf test
+- **Task berikutnya:** F4.3 DevOps, atau F4.1.7 perf test
 - **Blocker aktif:** —
 - **Last commit:** `466addb` di `origin/master` (+ perubahan F3.4 belum di-commit)
-- **Tests:** `pytest -m "not integration"` → **152 passed**
+- **Tests:** `pytest -m "not integration"` → **159 passed**
 
 ### Ringkasan codebase (apa yang sudah jalan)
 | Area | File utama | Status |
@@ -276,12 +276,12 @@ run → PLANNING → PLAN_APPROVAL → TASK_LOOP → INDEXING (stub)
 - [x] **F4.1.6** Search API untuk agent lain
 - [ ] **F4.1.7** Performance test (codebase 1000 files)
 
-#### Milestone 4.2 — UI/UX Designer [ ]
-- [ ] **F4.2.1** Implement `agents/designer.py`
-- [ ] **F4.2.2** Prompt template + Flet widget reference
-- [ ] **F4.2.3** Output validator (design.json schema)
-- [ ] **F4.2.4** Pass design.json ke Coder sebagai context
-- [ ] **F4.2.5** Test: form, list, navigation, chart screens
+#### Milestone 4.2 — UI/UX Designer [x]
+- [x] **F4.2.1** Implement `agents/designer.py`
+- [x] **F4.2.2** Prompt template + Flet widget reference
+- [x] **F4.2.3** Output validator (design.json schema)
+- [x] **F4.2.4** Pass design.json ke Coder sebagai context
+- [x] **F4.2.5** Test: form, list, navigation, chart screens
 
 #### Milestone 4.3 — DevOps Agent [ ]
 - [ ] **F4.3.1** Implement `agents/devops.py`
@@ -403,6 +403,16 @@ Total milestones per fase:
 ## 5. Session Log
 
 > Append-only log per sesi kerja. Format: `## YYYY-MM-DD HH:MM — Topik singkat`
+
+### 2026-05-29 — F4.2 UI/UX Designer
+**Selesai:**
+- `agents/designer.py`, `design_models.py`, `design_parser.py`, `llm/prompts/designer.txt`
+- `execute_designing()` di orchestrator; Coder membaca `designs/{task_id}.json`
+- Tests: form, list, navigation, chart screen patterns
+
+**Next:** F4.3 DevOps
+
+---
 
 ### 2026-05-29 — F4.1.5 Index watcher
 **Selesai:**

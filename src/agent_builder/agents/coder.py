@@ -6,6 +6,8 @@ import ast
 
 from agent_builder.agents.base import AgentContext, AgentResult, BaseAgent
 from agent_builder.agents.code_parser import CodeParseError, extract_code_files
+from agent_builder.agents.design_parser import format_design_for_coder
+from agent_builder.agents.designer import load_design_for_task
 from agent_builder.core.state import Plan, PlanTask
 from agent_builder.llm.types import LLMMessage
 from agent_builder.tools.file_ops import write_project_files
@@ -39,6 +41,12 @@ class CoderAgent(BaseAgent):
             files_hint = "(infer from task title)"
 
         plan_context = _format_plan_context(plan, plan_task)
+        if self.workspace is not None and plan_task is not None:
+            design = load_design_for_task(self.workspace, plan_task.id)
+            if design is not None:
+                plan_context = (
+                    f"{plan_context}\n\nUI design spec:\n{format_design_for_coder(design)}"
+                )
         if feedback:
             plan_context = f"{plan_context}\n\nPrevious attempt errors:\n{feedback}"
 

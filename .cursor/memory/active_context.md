@@ -1,29 +1,23 @@
 # Active Context
 
-**Last updated:** 2026-05-29 — F4.1.5 watcher selesai
+**Last updated:** 2026-05-29 — F4.2 Designer selesai
 
 ## Lanjut dari sini
 
-- **Phase:** Fase 4 — **F4.2** UI/UX Designer (`agents/designer.py`)
-- **Selesai:** Milestone 4.1 Indexer penuh (kecuali F4.1.7 perf test)
-- **Prompt:** `lanjut` atau *Lanjut F4.2 Designer*
+- **Phase:** Fase 4 — **F4.3** DevOps agent
+- **Selesai:** Designer → `designs/{task_id}.json` → Coder context
+- **Prompt:** `lanjut` atau *Lanjut F4.3 DevOps*
 
-## Indexer + watcher
+## File penting
 
-| API | Path |
-|-----|------|
-| Watcher | `indexing/watcher.py` — `ProjectIndexWatcher` |
-| Re-index | `orchestrator.reindex_files()` after Coder |
-| Search | `indexing/search.py` — `search_relevant_files()` |
-
-Build pipeline starts watcher at loop entry, flushes on exit.
+| Tujuan | Path |
+|--------|------|
+| Designer | `src/agent_builder/agents/designer.py` |
+| Schema | `src/agent_builder/agents/design_models.py` |
+| Coder hook | `coder.py` — `load_design_for_task` |
 
 ## Commands
 
 ```powershell
-pytest -m "not integration" -q   # 152 passed
+pytest -m "not integration" -q   # 159 passed
 ```
-
-## State
-
-- Git: uncommitted (F3.4–F4.1.5)
