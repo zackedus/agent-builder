@@ -1,0 +1,2 @@
+Buatkan aplikasi pencatat pengeluaran harian dengan grafik bulanan.
+Gunakan Flet untuk UI, SQLite untuk penyimpanan, matplotlib untuk chart.

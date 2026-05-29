@@ -1,0 +1,49 @@
+# Agent Team Builder — Cursor AI Rules
+
+## Project
+
+- **Name:** agent-team-builder
+- **Stack:** Python 3.11+, Typer/Rich CLI, Flet (dashboard Fase 5), Anthropic + Ollama
+- **Spec:** Read `ARCHITECTURE.md` and `PROGRESS.md` §1 before coding
+- **Package:** `src/agent_builder/` (never add duplicate top-level packages)
+
+## Conventions
+
+- Use `ruff` + `mypy` (strict) — run before marking tasks done
+- Pydantic v2 for all state/config models (`core/state.py`, `config.py`)
+- Atomic writes for `state.json` and `events.jsonl` (tmp + rename)
+- Agents communicate via blackboard (files/JSON), not direct calls
+- 1 task ≈ 1 file change (Coder principle)
+- No hardcoded secrets — use `.env` / `Settings` in `config.py`
+
+## Layer rules
+
+| Layer | Path | May import |
+|---|---|---|
+| CLI | `cli.py` | core, config |
+| Core | `core/` | config, exceptions |
+| Agents | `agents/` | core, llm, tools, sandbox |
+| LLM | `llm/` | config |
+| Sandbox | `sandbox/` | core |
+| Dashboard | `dashboard/` | core (Fase 5) |
+
+## Do not
+
+- Create duplicate services/utilities — search `src/` first
+- Use Streamlit (replaced by Flet per ARCHITECTURE v1.1)
+- Skip tests for core logic changes
+- Implement Fase N features while Fase N-1 milestones are open (check PROGRESS.md)
+
+## Cursor team workflow
+
+For multi-step features, follow `AGENTS.md` and `.cursor/team/communication_protocol.md`.
+Update `docs/module_map.md` and `feature_registry.json` when behavior changes.
+
+## Commands
+
+```bash
+pytest
+ruff check .
+mypy src
+agent-builder doctor
+```

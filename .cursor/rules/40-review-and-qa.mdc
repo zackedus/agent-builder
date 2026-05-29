@@ -1,0 +1,59 @@
+---
+description: Review, quality, and testing rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Review and QA Rules
+
+## Code Quality
+
+- Keep code readable.
+- Prefer explicit names.
+- Avoid giant files.
+- Avoid deeply nested logic.
+- Avoid hidden side effects.
+- Avoid magic numbers and unexplained constants.
+- Remove unused imports and dead code.
+- Keep formatting consistent.
+
+## Error Handling
+
+Every risky operation must handle errors:
+- network call
+- database operation
+- file operation
+- parsing/deserialization
+- payment/billing/tax/accounting operation
+- authentication/authorization
+- background job
+- sync job
+
+## Validation
+
+Validate:
+- user input
+- external API response
+- environment variables
+- file upload
+- database payload
+- route parameters
+- permissions
+
+## Testing
+
+Before finishing:
+- Run the project’s relevant analyzer/linter/typecheck/test command.
+- If command is unknown, inspect package/config files to identify it.
+- If tests do not exist, explain what manual check is needed.
+
+Common commands by ecosystem:
+- JavaScript/TypeScript: npm test, npm run lint, npm run typecheck
+- Next/Vue/React: npm run lint, npm run build
+- Node/Nest/Express: npm test, npm run lint
+- Python: pytest, ruff check, mypy
+- PHP/Laravel: php artisan test, composer test, pint
+- Go: go test ./...
+- Rust: cargo test, cargo clippy
+- Dart/Flutter: dart analyze, flutter test
+- Java/Kotlin: ./gradlew test

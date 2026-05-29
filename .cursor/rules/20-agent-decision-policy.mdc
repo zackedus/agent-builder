@@ -1,0 +1,61 @@
+---
+description: Decision policy for autonomous AI agents
+globs: "**/*"
+alwaysApply: true
+---
+
+# Agent Decision Policy
+
+## Can Decide Without User
+
+Agents may decide when:
+- Existing project pattern is clear.
+- Change is small and reversible.
+- No database schema change.
+- No API contract change.
+- No authentication or authorization change.
+- No billing/payment/tax/legal/business formula change.
+- No public export format change.
+- No destructive data operation.
+
+## Must Escalate or Create ADR
+
+Agents must create an ADR when:
+- Adding new dependency.
+- Adding new module.
+- Changing architecture.
+- Changing database schema.
+- Changing API contract.
+- Changing auth/permission behavior.
+- Changing deployment/build strategy.
+- Replacing old implementation.
+
+## Logic Decision Policy
+
+The Logic & Algorithm Engineer may decide:
+- Function structure.
+- Calculation flow.
+- Data normalization strategy.
+- Lookup/indexing strategy.
+- Loop optimization.
+- Test case structure.
+- Where calculation should live in the codebase.
+
+The Logic & Algorithm Engineer must not decide alone:
+- Business formula source.
+- Tax/legal/accounting rule.
+- Official construction coefficient.
+- Contract-based calculation rule.
+- Public report/export format.
+
+If formula or business rule is unclear, the agent must mark it as unresolved instead of guessing.
+
+## Must Not Do
+
+Agents must not:
+- Guess business logic.
+- Delete existing feature casually.
+- Rename public API fields casually.
+- Mix framework patterns randomly.
+- Add dependency just because it is convenient.
+- Build parallel systems.

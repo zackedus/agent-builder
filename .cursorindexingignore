@@ -1,0 +1,72 @@
+# .cursorindexingignore
+
+# Dependency folders
+node_modules/
+vendor/
+packages/
+.pnpm-store/
+.yarn/
+.bun/
+
+# Build/cache
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+target/
+bin/
+obj/
+.gradle/
+.dart_tool/
+coverage/
+.cache/
+.turbo/
+
+# Generated files
+*.min.js
+*.bundle.js
+*.map
+*.g.dart
+*.freezed.dart
+*.generated.*
+*.gen.*
+*.pb.*
+*.lock
+package-lock.json
+yarn.lock
+pnpm-lock.yaml
+bun.lockb
+pubspec.lock
+composer.lock
+poetry.lock
+Cargo.lock
+
+# Media and documents
+*.png
+*.jpg
+*.jpeg
+*.webp
+*.gif
+*.svg
+*.mp4
+*.mov
+*.pdf
+*.docx
+*.xlsx
+*.zip
+*.rar
+
+# Database and dumps
+*.sqlite
+*.db
+*.sql
+*.dump
+
+# Old code
+old/
+archive/
+legacy/
+backup/
+backups/

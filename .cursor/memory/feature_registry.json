@@ -1,0 +1,19 @@
+{
+  "features": [
+    {
+      "feature_id": "example_feature",
+      "module": "example",
+      "framework_area": "frontend | backend | mobile | database | cli | shared",
+      "purpose": "Describe what this feature does",
+      "main_files": [],
+      "related_features": [],
+      "data_dependencies": [],
+      "api_dependencies": [],
+      "ui_dependencies": [],
+      "logic_dependencies": [],
+      "test_files": [],
+      "known_risks": [],
+      "last_updated": "YYYY-MM-DD"
+    }
+  ]
+}

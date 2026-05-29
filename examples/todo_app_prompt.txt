@@ -1,0 +1,2 @@
+Buatkan aplikasi todo list sederhana dengan Flet dan SQLite.
+Fitur: tambah task, tandai selesai, hapus, filter aktif/selesai.

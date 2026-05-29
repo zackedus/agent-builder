@@ -1,0 +1,91 @@
+# .cursorignore
+
+# Dependencies
+node_modules/
+vendor/
+packages/
+.pnpm-store/
+.yarn/
+.bun/
+bower_components/
+
+# Build output
+dist/
+build/
+out/
+.next/
+.nuxt/
+.output/
+coverage/
+target/
+bin/
+obj/
+release/
+debug/
+.gradle/
+.dart_tool/
+
+# Generated files
+*.g.dart
+*.freezed.dart
+*.generated.*
+*.gen.*
+*.pb.go
+*.pb.dart
+*.designer.cs
+*.lockb
+
+# Logs and temp
+*.log
+logs/
+tmp/
+temp/
+.cache/
+.cache-loader/
+.eslintcache/
+.parcel-cache/
+.turbo/
+
+# Environment and secrets
+.env
+.env.*
+!.env.example
+*.pem
+*.key
+*.crt
+*.p12
+*.pfx
+*.jks
+*.keystore
+secrets/
+credentials/
+service-account*.json
+google-services.json
+GoogleService-Info.plist
+
+# Large files
+*.zip
+*.rar
+*.7z
+*.tar
+*.gz
+*.mp4
+*.mov
+*.avi
+*.mkv
+*.pdf
+*.docx
+*.xlsx
+*.psd
+*.ai
+
+# Database dumps/backups
+*.sql
+*.sqlite
+*.db
+*.dump
+backup/
+backups/
+archive/
+old/
+legacy/

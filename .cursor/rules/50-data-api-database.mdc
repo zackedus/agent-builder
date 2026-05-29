@@ -1,0 +1,48 @@
+---
+description: Universal data, API, and database rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Data, API, and Database Rules
+
+## Database
+
+Before changing schema:
+1. Inspect existing migrations.
+2. Inspect existing models/entities.
+3. Inspect existing repository/data access layer.
+4. Create migration if needed.
+5. Consider backward compatibility.
+6. Consider rollback.
+7. Consider existing data.
+
+Never rename or delete columns/tables/collections casually.
+
+## API
+
+Before changing API:
+1. Inspect existing routes/controllers.
+2. Inspect consumers.
+3. Preserve response shape unless change is intentional.
+4. Validate request body/query/params.
+5. Handle error responses consistently.
+6. Update API docs/tests if available.
+
+## Parsing
+
+When reading external data:
+- Avoid blind casts.
+- Handle null.
+- Handle string/int/float/bool variations.
+- Handle missing fields.
+- Keep safe parser reusable when needed.
+
+## Sync / Background Jobs
+
+For sync or background jobs:
+- handle retry
+- avoid duplicates
+- log job context
+- avoid data loss
+- preserve idempotency where possible

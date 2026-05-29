@@ -1,0 +1,52 @@
+---
+description: Communication protocol between AI agents
+globs: "**/*"
+alwaysApply: true
+---
+
+# Agent Communication Protocol
+
+Agents must communicate using shared files, not hidden assumptions.
+
+## Required Shared Files
+
+For every medium or large task, create or update:
+
+- .cursor/team/tasks/TASK-[id].md
+- .cursor/team/handoffs/HANDOFF-[id]-[agent].md
+- .cursor/team/reviews/REVIEW-[id].md when reviewed
+- .cursor/team/decisions/ADR-[id].md for important decisions
+
+## Handoff Format
+
+Every handoff must include:
+
+- Agent name
+- Task ID
+- Summary
+- Files inspected
+- Files changed
+- Integration points
+- Risks
+- Tests/checks run
+- Next agent recommendation
+
+## Logic and Algorithm Communication
+
+For any task involving calculation, data processing, search, matching, ranking, filtering, aggregation, report generation, finance, measurement, quantity, pricing, or optimization:
+
+- Logic & Algorithm Engineer must create a logic analysis before implementation.
+- Engineering agents must follow the approved logic analysis.
+- QA must use the test cases from Logic & Algorithm Engineer.
+- If implementation changes the approved logic, Code Reviewer must check and document the reason.
+
+## Conflict Rules
+
+- Do not overwrite another agent's handoff.
+- Do not mark task complete if another required agent has unresolved blockers.
+- Architecture conflict: Solution Architect decides.
+- Security risk: Security Engineer can block.
+- Test failure: QA Engineer can block.
+- Duplicate implementation: Code Reviewer can block.
+- Logic/calculation error: Logic & Algorithm Engineer can block.
+- Final coordination: Orchestrator decides.

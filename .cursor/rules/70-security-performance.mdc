@@ -1,0 +1,55 @@
+---
+description: Universal security and performance rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Security and Performance Rules
+
+## Security
+
+Never:
+- hardcode secrets
+- expose API keys
+- log passwords/tokens
+- commit private credentials
+- weaken authentication
+- bypass authorization
+- trust client-side validation only
+- accept raw input into database queries
+- disable security middleware casually
+
+Always check:
+- input validation
+- output escaping
+- authentication
+- authorization
+- rate limiting if relevant
+- file upload restrictions
+- environment config
+- secure error messages
+
+## Performance
+
+Avoid:
+- unnecessary full-table scans
+- loading huge files into memory
+- repeated network calls inside loops
+- repeated database queries where batching is possible
+- large unnecessary client bundles
+- expensive UI re-renders
+- blocking main thread
+- unbounded recursion or loops
+
+## Logging
+
+Use existing logger.
+Do not log:
+- passwords
+- tokens
+- private keys
+- personal sensitive data
+- full payment details
+- private user documents
+
+Logs should help debugging without leaking sensitive data.

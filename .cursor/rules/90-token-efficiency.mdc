@@ -1,0 +1,32 @@
+---
+description: Token efficiency and context control rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Token Efficiency Rules
+
+## Context Usage
+
+- Do not load unrelated files.
+- Do not paste long unchanged code.
+- Use search first, then open only relevant files.
+- Prefer exact file edits over broad rewrites.
+- Keep summaries concise.
+- Start a fresh task context when switching to a different feature.
+- Use project memory files instead of long chat history.
+
+## Agent Communication
+
+- Handoff should be concise.
+- Use file paths and bullet points.
+- Do not copy large code blocks into handoff.
+- Mention changed files instead of pasting full file content.
+- Store important decisions in ADR files.
+
+## Work Scope
+
+- Bug fix should not become refactor.
+- Refactor should not become new feature.
+- New feature should not rewrite architecture.
+- Documentation should not become novel writing. Please, society has suffered enough.

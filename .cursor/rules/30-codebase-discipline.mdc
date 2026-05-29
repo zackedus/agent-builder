@@ -1,0 +1,58 @@
+---
+description: Universal codebase discipline rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Codebase Discipline
+
+## Detect First
+
+Before implementing, identify:
+- Framework
+- Language
+- Package manager
+- App type: frontend, backend, mobile, desktop, CLI, library, monorepo, or full-stack
+- Main folder structure
+- Routing/API pattern
+- State/service pattern
+- Data access pattern
+- Test/lint/build commands
+
+## Follow Existing Pattern
+
+Do not introduce a new architecture pattern if the project already has one.
+
+Examples:
+- If project uses MVC, follow MVC.
+- If project uses Clean Architecture, follow Clean Architecture.
+- If project uses feature-based folders, follow feature-based folders.
+- If project uses layered folders, follow layered folders.
+- If project uses services/repositories, reuse them.
+- If project uses hooks/stores/controllers, follow that pattern.
+
+## No Parallel Systems
+
+Do not create a second:
+- auth system
+- database connector
+- API client
+- route registry
+- logger
+- config loader
+- validation system
+- export engine
+- state management system
+- theme system
+- permission system
+
+unless explicitly replacing the old one with migration plan.
+
+## Dependency Rule
+
+Before adding dependency:
+1. Check if existing dependency already solves the problem.
+2. Check project style.
+3. Prefer lightweight, maintained dependencies.
+4. Avoid adding dependency for tiny utility logic.
+5. Explain reason and risk.

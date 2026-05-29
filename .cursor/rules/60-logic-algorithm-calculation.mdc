@@ -1,0 +1,94 @@
+---
+description: Logic, algorithm, calculation, and efficiency rules
+globs: "**/*"
+alwaysApply: true
+---
+
+# Logic, Algorithm, and Calculation Rules
+
+## Mandatory for Calculation/Data Tasks
+
+For any task involving:
+- calculation
+- formula
+- price
+- quantity
+- measurement
+- tax
+- finance
+- report
+- import/export
+- matching
+- filtering
+- sorting
+- ranking
+- search
+- sync
+- aggregation
+- optimization
+
+the agent must analyze the logic before coding.
+
+## Required Analysis
+
+Before implementation, define:
+
+1. Input data.
+2. Output data.
+3. Validation rules.
+4. Processing steps.
+5. Edge cases.
+6. Rounding/precision rules.
+7. Performance risk.
+8. Test cases.
+
+## Efficiency Rules
+
+Prefer:
+- O(n) over O(n²) when processing large lists.
+- Map/index lookup over repeated search.
+- Batch query over query inside loop.
+- Pure functions for calculations.
+- Cached/precomputed result when safe.
+- Pagination/lazy loading for large data.
+- Streaming/chunking for large files.
+
+Avoid:
+- Nested loops without reason.
+- Repeated parsing/calculation.
+- Database/API call inside loop.
+- Heavy calculation inside UI rendering.
+- Early rounding before final result.
+- Mixing formatted string with raw numeric value.
+- Duplicate helper/calculator.
+
+## Calculation Rules
+
+- Keep raw numeric result separate from display text.
+- Define units clearly.
+- Do not invent formulas.
+- Do not hardcode coefficients unless they are documented.
+- Do not round early unless required by domain rule.
+- Use safe numeric parsing.
+- Handle null, zero, negative, and invalid values.
+- Add sample test cases for important calculations.
+
+## Layering Rules
+
+Calculation logic should not live in UI/component files unless it is trivial display logic.
+
+Prefer:
+- domain layer
+- service layer
+- utility/helper
+- calculator module
+- database query/aggregation layer when appropriate
+
+## Done Criteria
+
+A logic-heavy task is not done until:
+- formula/algorithm is documented
+- edge cases are listed
+- test cases are provided
+- implementation follows the approved logic
+- QA verifies expected result

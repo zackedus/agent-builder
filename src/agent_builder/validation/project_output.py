@@ -1,0 +1,243 @@
+"""Validate generated Python projects under ``workspace/project/``."""
+
+from __future__ import annotations
+
+import ast
+import sys
+from dataclasses import dataclass, field
+from datetime import UTC, datetime
+from pathlib import Path
+from typing import TYPE_CHECKING
+
+from agent_builder.core.event_bus import Event, EventType
+from agent_builder.core.state import SessionMetrics, SessionState
+from agent_builder.llm.cost_tracker import estimate_cost
+
+if TYPE_CHECKING:
+    from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox
+
+ENTRY_CANDIDATES = ("calc.py", "main.py", "app.py", "cli.py", "run.py")
+
+
+def _needs_argv_separator(args: list[str]) -> bool:
+    """Windows CPython treats leading ``+``/``-`` tokens as interpreter flags."""
+    if sys.platform != "win32":
+        return False
+    return any(arg.startswith(("+", "-")) and arg not in ("-", "--") for arg in args)
+
+
+def _python_script_command(script: Path, args: list[str]) -> list[str]:
+    command = [sys.executable, str(script.resolve())]
+    if _needs_argv_separator(args):
+        command.append("--")
+    command.extend(args)
+    return command
+
+
+@dataclass
+class ProjectValidationResult:
+    """Outcome of syntax and optional runtime checks."""
+
+    python_files: list[str] = field(default_factory=list)
+    syntax_errors: list[str] = field(default_factory=list)
+    entry_script: str | None = None
+    run_exit_code: int | None = None
+    run_stdout: str = ""
+    run_stderr: str = ""
+    run_blocked: bool = False
+    run_block_reason: str | None = None
+
+    @property
+    def syntax_ok(self) -> bool:
+        return not self.syntax_errors and bool(self.python_files)
+
+    @property
+    def run_ok(self) -> bool:
+        if self.run_blocked:
+            return False
+        return self.run_exit_code == 0
+
+
+@dataclass(frozen=True)
+class BuildMetricsSummary:
+    total_llm_calls: int
+    total_cost_usd: float
+    elapsed_seconds: int
+    input_tokens: int
+    output_tokens: int
+
+
+def find_python_files(project_dir: Path) -> list[Path]:
+    """List ``.py`` files under *project_dir* (sorted, stable)."""
+    if not project_dir.is_dir():
+        return []
+    return sorted(
+        path
+        for path in project_dir.rglob("*.py")
+        if path.is_file() and "__pycache__" not in path.parts
+    )
+
+
+def validate_python_syntax(paths: list[Path]) -> list[str]:
+    """Return syntax error messages (empty if all files parse)."""
+    errors: list[str] = []
+    for path in paths:
+        try:
+            source = path.read_text(encoding="utf-8")
+            ast.parse(source, filename=str(path))
+        except SyntaxError as exc:
+            errors.append(f"{path.name}: {exc}")
+        except OSError as exc:
+            errors.append(f"{path.name}: {exc}")
+    return errors
+
+
+def find_entry_script(project_dir: Path, python_files: list[Path]) -> Path | None:
+    """Pick a likely CLI entry script."""
+    by_name = {p.name: p for p in python_files}
+    for name in ENTRY_CANDIDATES:
+        if name in by_name:
+            return by_name[name]
+
+    for path in python_files:
+        try:
+            tree = ast.parse(path.read_text(encoding="utf-8"), filename=str(path))
+        except (SyntaxError, OSError):
+            continue
+        for node in tree.body:
+            if isinstance(node, ast.If) and _is_main_guard(node.test):
+                return path
+    return python_files[0] if python_files else None
+
+
+def _is_main_guard(test: ast.expr) -> bool:
+    if not isinstance(test, ast.Compare) or len(test.ops) != 1:
+        return False
+    if not isinstance(test.ops[0], ast.Eq):
+        return False
+    left = test.left
+    right = test.comparators[0] if test.comparators else None
+    return (
+        isinstance(left, ast.Name)
+        and left.id == "__name__"
+        and isinstance(right, ast.Constant)
+        and right.value == "__main__"
+    )
+
+
+async def run_entry_script(
+    sandbox: SubprocessSandbox,
+    script: Path,
+    args: list[str],
+    *,
+    cwd: Path | None = None,
+) -> tuple[int | None, str, str, bool, str | None]:
+    """Run ``python script args…`` and return exit code and streams."""
+    command = _python_script_command(script, args)
+    result = await sandbox.run_command(command, cwd=cwd or script.parent)
+    return (
+        result.returncode,
+        result.stdout,
+        result.stderr,
+        result.blocked,
+        result.block_reason,
+    )
+
+
+async def validate_project_output(
+    project_dir: Path,
+    *,
+    run_args: list[str] | None = None,
+    sandbox: SubprocessSandbox | None = None,
+) -> ProjectValidationResult:
+    from agent_builder.sandbox.subprocess_sandbox import SubprocessSandbox as _Sandbox
+
+    """Check Python files exist, parse, and optionally execute the entry script."""
+    python_files = find_python_files(project_dir)
+    rel_paths = [str(p.relative_to(project_dir)).replace("\\", "/") for p in python_files]
+    syntax_errors = validate_python_syntax(python_files)
+    entry = find_entry_script(project_dir, python_files)
+    entry_rel = (
+        str(entry.relative_to(project_dir)).replace("\\", "/") if entry is not None else None
+    )
+
+    outcome = ProjectValidationResult(
+        python_files=rel_paths,
+        syntax_errors=syntax_errors,
+        entry_script=entry_rel,
+    )
+
+    if run_args is None or entry is None or syntax_errors:
+        return outcome
+
+    sb = sandbox or _Sandbox(project_dir)
+    code, stdout, stderr, blocked, reason = await run_entry_script(
+        sb,
+        entry,
+        run_args,
+        cwd=project_dir,
+    )
+    outcome.run_exit_code = code
+    outcome.run_stdout = stdout
+    outcome.run_stderr = stderr
+    outcome.run_blocked = blocked
+    outcome.run_block_reason = reason
+    return outcome
+
+
+def assert_calculator_output(stdout: str, expected: float, *, tolerance: float = 1e-6) -> None:
+    """Assert *stdout* contains a numeric result close to *expected*."""
+    tokens = stdout.replace(",", " ").split()
+    numbers: list[float] = []
+    for token in tokens:
+        try:
+            numbers.append(float(token))
+        except ValueError:
+            continue
+    if not numbers:
+        raise AssertionError(f"No numeric output in stdout: {stdout!r}")
+    if not any(abs(n - expected) <= tolerance for n in numbers):
+        raise AssertionError(
+            f"Expected ~{expected} in output, got numbers {numbers} from: {stdout!r}"
+        )
+
+
+def summarize_metrics_from_events(
+    events: list[Event],
+    session: SessionState,
+) -> BuildMetricsSummary:
+    """Aggregate LLM usage and elapsed time for a build session."""
+    llm_events = [e for e in events if e.type == EventType.LLM_CALL]
+    input_tokens = 0
+    output_tokens = 0
+    total_cost = 0.0
+    for event in llm_events:
+        inp = int(event.payload.get("input_tokens", 0))
+        out = int(event.payload.get("output_tokens", 0))
+        model = str(event.payload.get("model", "ollama"))
+        input_tokens += inp
+        output_tokens += out
+        total_cost += estimate_cost(model, inp, out)
+
+    started = session.started_at
+    if started.tzinfo is None:
+        started = started.replace(tzinfo=UTC)
+    elapsed = int((datetime.now(UTC) - started).total_seconds())
+
+    return BuildMetricsSummary(
+        total_llm_calls=len(llm_events),
+        total_cost_usd=total_cost,
+        elapsed_seconds=max(elapsed, 0),
+        input_tokens=input_tokens,
+        output_tokens=output_tokens,
+    )
+
+
+def apply_metrics_to_session(session: SessionState, summary: BuildMetricsSummary) -> SessionState:
+    """Update persisted session metrics from a build summary."""
+    session.metrics = SessionMetrics(
+        total_llm_calls=summary.total_llm_calls,
+        total_cost_usd=summary.total_cost_usd,
+        elapsed_seconds=summary.elapsed_seconds,
+    )
+    return session
